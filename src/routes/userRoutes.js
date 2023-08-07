@@ -118,9 +118,9 @@ router.post("/", async (req, res) => {
     });
 
     if (created) {
-      res.status(201).json({message:"Usuario creado", created});
+      res.status(201).json({message:"Empresa creada", created});
     } else {
-      res.status(200).json({warning:"El usuario ya existe", user});
+      res.status(200).json({warning:"La empresa ya existe", user});
     }
   } catch (error) {
     res.status(500).send("Error: " + error);
