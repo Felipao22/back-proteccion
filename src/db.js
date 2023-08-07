@@ -51,7 +51,7 @@ const sequelize = new Sequelize(DB_URL, {
       require: true,
       rejectUnauthorized: false,
     },
-    sslmode: 'require'
+    sslmode: 'require' 
   }
   
 });
