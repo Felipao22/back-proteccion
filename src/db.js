@@ -3,7 +3,7 @@ const { Sequelize } = require('sequelize');
 const fs = require('fs');
 const path = require('path');
 const {
-  DB_USER, DB_PASSWORD, DB_HOST, DB_NAME, DB_USER_FL0, DB_PASSWORD_Fl0, DB_HOST_Fl0, DB_URL
+  DB_USER, DB_PASSWORD, DB_HOST, DB_NAME, DB_USER_FL0, DB_PASSWORD_Fl0, DB_HOST_Fl0, DB_URL, DB_RENDER
 } = process.env;
 
 // let sequelize =
@@ -49,9 +49,7 @@ const sequelize = new Sequelize(DB_URL, {
   dialectOptions:{
     ssl: {
       require: true,
-      rejectUnauthorized: false,
     },
-    sslmode: 'require' 
   }
   
 });
