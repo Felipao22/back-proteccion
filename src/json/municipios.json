@@ -1,0 +1,272 @@
+{
+  "municipios": [
+    {
+      "id": "746280",
+      "nombre": "Zanjitas"
+    },
+    {
+      "id": "746252",
+      "nombre": "Beazley"
+    },
+    {
+      "id": "746245",
+      "nombre": "Balde"
+    },
+    {
+      "id": "746049",
+      "nombre": "Fraga"
+    },
+    {
+      "id": "746266",
+      "nombre": "P. de los Funes"
+    },
+    {
+      "id": "746035",
+      "nombre": "Carolina"
+    },
+    {
+      "id": "740028",
+      "nombre": "San Francisco"
+    },
+    {
+      "id": "740105",
+      "nombre": "Merlo"
+    },
+    {
+      "id": "740119",
+      "nombre": "Juana Koslay"
+    },
+    {
+      "id": "746168",
+      "nombre": "Batavia"
+    },
+    {
+      "id": "740073",
+      "nombre": "Ranqueles"
+    },
+    {
+      "id": "746238",
+      "nombre": "Alto Pencoso"
+    },
+    {
+      "id": "746294",
+      "nombre": "Las Aguadas"
+    },
+    {
+      "id": "740140",
+      "nombre": "San Martin"
+    },
+    {
+      "id": "746007",
+      "nombre": "Leandro N. Alem"
+    },
+    {
+      "id": "746014",
+      "nombre": "La Calera"
+    },
+    {
+      "id": "746133",
+      "nombre": "La Punilla"
+    },
+    {
+      "id": "749175",
+      "nombre": "Fortin el Patria"
+    },
+    {
+      "id": "740014",
+      "nombre": "Lujan"
+    },
+    {
+      "id": "740021",
+      "nombre": "Quines"
+    },
+    {
+      "id": "746287",
+      "nombre": "Las Vertientes"
+    },
+    {
+      "id": "746315",
+      "nombre": "Paso Grande"
+    },
+    {
+      "id": "740133",
+      "nombre": "San Luis"
+    },
+    {
+      "id": "746042",
+      "nombre": "El Trapiche"
+    },
+    {
+      "id": "746189",
+      "nombre": "Navia"
+    },
+    {
+      "id": "740108",
+      "nombre": "Desaguadero"
+    },
+    {
+      "id": "740077",
+      "nombre": "Villa Mercedes"
+    },
+    {
+      "id": "740007",
+      "nombre": "Candelaria"
+    },
+    {
+      "id": "746231",
+      "nombre": "Alto Pelado"
+    },
+    {
+      "id": "746308",
+      "nombre": "Las Lagunas"
+    },
+    {
+      "id": "746301",
+      "nombre": "Las Chacras"
+    },
+    {
+      "id": "746322",
+      "nombre": "V, de Praga"
+    },
+    {
+      "id": "746098",
+      "nombre": "Villa del Carmen"
+    },
+    {
+      "id": "746091",
+      "nombre": "San Pablo"
+    },
+    {
+      "id": "746084",
+      "nombre": "Renca"
+    },
+    {
+      "id": "740063",
+      "nombre": "Tilisarao"
+    },
+    {
+      "id": "746217",
+      "nombre": "Los Molles"
+    },
+    {
+      "id": "740035",
+      "nombre": "V, Gral, Roca"
+    },
+    {
+      "id": "746028",
+      "nombre": "V, de la Quebrada"
+    },
+    {
+      "id": "746021",
+      "nombre": "Nogoli"
+    },
+    {
+      "id": "746203",
+      "nombre": "Carpinteria"
+    },
+    {
+      "id": "740042",
+      "nombre": "La Toma"
+    },
+    {
+      "id": "746126",
+      "nombre": "Juan Llerena"
+    },
+    {
+      "id": "740049",
+      "nombre": "Concaran"
+    },
+    {
+      "id": "746224",
+      "nombre": "Talita"
+    },
+    {
+      "id": "740098",
+      "nombre": "Sta Rosa del Conlara"
+    },
+    {
+      "id": "746105",
+      "nombre": "Villa Larca"
+    },
+    {
+      "id": "746077",
+      "nombre": "Papagayos"
+    },
+    {
+      "id": "740056",
+      "nombre": "Naschel"
+    },
+    {
+      "id": "740070",
+      "nombre": "Justo Daract"
+    },
+    {
+      "id": "746063",
+      "nombre": "Saladillo"
+    },
+    {
+      "id": "746161",
+      "nombre": "Bagual"
+    },
+    {
+      "id": "746154",
+      "nombre": "Arizona"
+    },
+    {
+      "id": "740084",
+      "nombre": "Buena Esperanza"
+    },
+    {
+      "id": "740091",
+      "nombre": "Union"
+    },
+    {
+      "id": "746273",
+      "nombre": "San Jeronimo"
+    },
+    {
+      "id": "746259",
+      "nombre": "El Volcan"
+    },
+    {
+      "id": "740038",
+      "nombre": "Estancia Grande"
+    },
+    {
+      "id": "749007",
+      "nombre": "La Punta"
+    },
+    {
+      "id": "746196",
+      "nombre": "Nueva Galia"
+    },
+    {
+      "id": "749182",
+      "nombre": "Fortuna"
+    },
+    {
+      "id": "746147",
+      "nombre": "Anchorena"
+    },
+    {
+      "id": "749119",
+      "nombre": "Juan Jorba"
+    },
+    {
+      "id": "746140",
+      "nombre": "Lavaisse"
+    },
+    {
+      "id": "746112",
+      "nombre": "San Jose del Morro"
+    },
+    {
+      "id": "746070",
+      "nombre": "Cortaderas"
+    },
+    {
+      "id": "746210",
+      "nombre": "Lafinur"
+    }
+  ]
+}

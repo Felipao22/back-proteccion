@@ -1,0 +1,6 @@
+/node_modules
+.env
+ /src/app.js
+ /uploads
+ /src/json/users.json
+

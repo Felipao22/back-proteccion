@@ -1,0 +1,29 @@
+{
+    "usuarios":[
+        {
+            "userId": 1,
+            "email":"asesor@proteccionlaboral.com.ar",
+            "password": "cristian",
+            "deleted":false,
+            "isAdmin":true,
+            "isSuperAdmin": false
+        },
+        {
+            "userId": 2,
+            "email":"info@proteccionlaboral.com.ar",
+            "password": "cristian",
+            "deleted":false,
+            "isAdmin":true,
+            "isSuperAdmin": true
+        },
+        {
+            "userId": 3,
+            "email":"felipe@gmail.com",
+            "password": "felipe",
+            "nombreEmpresa": "Felipe´s Business",
+            "deleted":false,
+            "isAdmin":false,
+            "isSuperAdmin": false
+        }
+    ]
+}
