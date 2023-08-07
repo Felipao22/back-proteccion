@@ -36,7 +36,7 @@ const {
 //       dialectOptions: {
 //         ssl: {
 //           require: true,
-//           rejectUnauthorized: false, // Solo para pruebas, puedes remover esto en producción
+//           // Solo para pruebas, puedes remover esto en producción
 //         },
 //       },
 //       sslmode: 'require', // Agregar esta línea para forzar el uso de SSL
@@ -46,6 +46,14 @@ const {
 const sequelize = new Sequelize(DB_URL, {
   logging: false, // set to console.log to see the raw SQL queries
   native: false, // lets Sequelize know we can use pg-native for ~30% more speed
+  dialectOptions:{
+    ssl: {
+      require: true,
+      rejectUnauthorized: false,
+    },
+    sslmode: 'require'
+  }
+  
 });
 const basename = path.basename(__filename);
 
