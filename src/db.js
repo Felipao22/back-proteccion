@@ -49,7 +49,7 @@ const sequelize = new Sequelize(DB_RENDER, {
   dialectOptions:{
     ssl: {
       require: true,
-    },
+    }, 
   }
   
 });
