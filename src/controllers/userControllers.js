@@ -36,10 +36,10 @@ const apiUsers = async () => {
     const foundUsers = await User.findOne();
     if (!foundUsers) {
       const usersToCreate = users.map(user => {
-        const encryptedPassword = CryptoJS.AES.encrypt(user.password, process.env.PASS_SEC).toString();
+        // const encryptedPassword = CryptoJS.AES.encrypt(user.password, process.env.PASS_SEC).toString();
         return {
           ...user,
-          password: encryptedPassword,
+          // password: encryptedPassword,
           isAdmin: user.isAdmin ? true : false,
           isSuperAdmin: user.isSuperAdmin ? true : false // Asignar isAdmin: true si user.isAdmin es true, de lo contrario, asignar false
         };

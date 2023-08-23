@@ -3,7 +3,7 @@
         {
             "userId": 1,
             "email":"asesor@proteccionlaboral.com.ar",
-            "password": "cristian",
+            "password": "U2FsdGVkX1/MhQwt27t5mTwNTMhLUM1sBgDNNI17WHU=",
             "deleted":false,
             "isAdmin":true,
             "isSuperAdmin": false
@@ -11,7 +11,7 @@
         {
             "userId": 2,
             "email":"info@proteccionlaboral.com.ar",
-            "password": "cristian",
+            "password": "U2FsdGVkX1+u84DqIAUNcr6SLX7KIoG6BarCg8u7FfQ=",
             "deleted":false,
             "isAdmin":true,
             "isSuperAdmin": true
@@ -19,7 +19,7 @@
         {
             "userId": 3,
             "email":"felipe@gmail.com",
-            "password": "felipe",
+            "password": "U2FsdGVkX18iey5cm0Mcy1GLjFM2/kDJ/Oi7+ETNXw8=",
             "nombreEmpresa": "Felipe´s Business",
             "deleted":false,
             "isAdmin":false,

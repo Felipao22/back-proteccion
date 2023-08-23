@@ -1,9 +1,10 @@
-const { File, Kind } = require("../db");
+const { File, Kind, Branch, User } = require("../db");
 const { Op } = require("sequelize");
 const path = require("path");
 const fs = require("fs");
 const iconv = require("iconv-lite");
 const encodings = ["utf-8", "latin1", "windows-1252"];
+const transporter = require("../helpers/mailer");
 
 //Fucion del POST Files
 // async function uploadFile(req, res) {
@@ -43,20 +44,16 @@ async function uploadFile(req, res) {
   const { kindId, branchBranchId } = req.body;
 
   try {
-    const {
-      originalname,
-      mimetype: type,
-      path: data,
-      size: size,
-    } = req.file;
+    const { originalname, mimetype: type, path: data, size: size } = req.file;
 
     if (!kindId || !branchBranchId) {
       return res.status(400).json({
-        message: "Debe proporcionar el campo Establecimiento/Obras y tipo de archivo",
+        message:
+          "Debe proporcionar el campo Establecimiento/Obras y tipo de archivo",
       });
     }
 
-     // Agregar fecha al nombre del archivo en formato DD/MM/AA
+    // Agregar fecha al nombre del archivo en formato DD/MM/AA
     const date = new Date();
     const day = String(date.getDate()).padStart(2, "0");
     const month = String(date.getMonth() + 1).padStart(2, "0");
@@ -66,8 +63,14 @@ async function uploadFile(req, res) {
     const fileNameWithoutExtension = path.basename(originalname, fileExtension);
     const fileNameWithDate = `${fileNameWithoutExtension} - ${formattedDate}${fileExtension}`;
 
+    // Obtener el nombre del tipo de archivo desde la base de datos
+    const kind = await Kind.findOne({
+      where: { id: kindId },
+      attributes: ["name"],
+    });
+
     // Función recursiva para intentar cada codificación hasta encontrar una válida
-    function tryDecoding(index) {
+    async function tryDecoding(index) {
       if (index >= encodings.length) {
         // Si se han probado todas las codificaciones y ninguna funcionó, usar nombre original
         const newFile = File.create({
@@ -78,12 +81,18 @@ async function uploadFile(req, res) {
           kindId,
           branchBranchId,
         });
-        return res.json({ message: "Archivo subido correctamente", file: newFile });
+        return res.json({
+          message: "Archivo subido correctamente",
+          file: newFile,
+        });
       }
 
       const encoding = encodings[index];
       try {
-        const decodedName = iconv.decode(Buffer.from(fileNameWithDate, "binary"), encoding);
+        const decodedName = iconv.decode(
+          Buffer.from(fileNameWithDate, "binary"),
+          encoding
+        );
         const newFile = File.create({
           name: decodedName,
           type,
@@ -92,7 +101,39 @@ async function uploadFile(req, res) {
           kindId,
           branchBranchId,
         });
-        return res.json({ message: "Archivo subido correctamente", file: newFile });
+        // Obtener el correo electrónico asociado a la rama (branch) desde alguna fuente
+        // Obtener la información de la rama y el tipo de archivo utilizando las relaciones
+        const branch = await Branch.findOne({
+          where: { branchId: branchBranchId },
+          attributes: ["userEmail"], // Asumiendo que el email está en la columna userEmail
+          include: [{ model: User, attributes: ["email"] }], // Incluir la información del usuario asociado a la rama
+        });
+
+        if (branch && kind) {
+          // Enviar el correo electrónico
+          const mailOptions = {
+            from: `Protección Laboral ${process.env.EMAIL_USER}`,
+            to: branch.userEmail,
+            subject: "Nuevo archivo subido",
+            html: `<h3>Se ha subido un nuevo archivo:</h3>
+            <ul>
+              <li>Nombre del archivo: ${fileNameWithDate}</li>
+              <li>Tipo del archivo: ${kind.name}.</li>
+            </ul>
+            `,
+          };
+        transporter.sendMail(mailOptions, (error, info) => {
+          if (error) {
+            console.error("Error al enviar el correo:", error);
+          } else {
+            console.log("Correo enviado:", info.response);
+          }
+          });
+      }
+        return res.json({
+          message: "Archivo subido correctamente",
+          file: newFile,
+        });
       } catch (err) {
         // Si hubo un error con la codificación, intentar con la siguiente
         tryDecoding(index + 1);
@@ -107,16 +148,6 @@ async function uploadFile(req, res) {
   }
 }
 
-//Fucion del GET Files por Id
-//http://localhost:3001/file/1
-// async function getFileById(id) {
-//   try {
-//     const foundFile = await File.findByPk(id);
-//     return foundFile;
-//   } catch (error) {
-//     console.log(`No se encontró el archivo solicitado,${error}`)
-//   }
-// }
 
 //Fucion del GET Files, redirecciona segun haya query name o no
 function getFiles(name) {

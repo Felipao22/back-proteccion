@@ -41,48 +41,6 @@ const apiBranches = async () => {
   }
 };
 
-// const getUserBranches = async (req, res) => {
-//   const { email } = req.params;
-
-//   try {
-//     // Buscar al usuario por su correo electrónico
-//     const user = await User.findOne({
-//       where: { email },
-//       include: {
-//         model: Branch,
-//         attributes: [
-//           "branchId",
-//           "nombreSede",
-//           "ciudad",
-//           "direccion",
-//           "telefono",
-//         ],
-//         where: { active: true }, // Puedes agregar otras condiciones para filtrar las sucursales si es necesario
-//         include: [
-//           {
-//             model: File,
-//           },
-//         ],
-//       },
-//     });
-
-//     if (!user) {
-//       return res.status(404).json({ message: "Usuario no encontrado" });
-//     }
-
-//     const userBranches = user.branches;
-
-//     return res.status(200).json({ branches: userBranches });
-//   } catch (error) {
-//     console.error("Error al obtener las sucursales del usuario:", error);
-//     return res
-//       .status(500)
-//       .json({
-//         message: "Ocurrió un error al obtener las sucursales del usuario",
-//       });
-//   }
-// };
-
 const getUserBranches = async (req, res) => {
   const { email } = req.params;
 
@@ -113,7 +71,7 @@ const getUserBranches = async (req, res) => {
           "direccion",
           "telefono",
         ],
-        where: { active: true }, // Puedes agregar otras condiciones para filtrar las sucursales si es necesario
+        where: { active: true },
         include: [
           {
             model: File,
@@ -135,9 +93,29 @@ const getUserBranches = async (req, res) => {
   }
 };
 
+const getFilesByBranchId = async (req, res) => {
+  const {branchId} = req.params
+  try {
+    const branch = await Branch.findByPk(branchId, {
+      include: {
+        model: File,
+      },
+    });
+
+    if (!branch) {
+      return res.status(404).json({ error: 'No se encontró Establecimiento/Obra' });
+    }
+    res.json(branch.files);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Error en el sistema' });
+  }
+}
+
 module.exports = {
   getBranches,
   getBranchesById,
   getUserBranches,
   apiBranches,
+  getFilesByBranchId
 };
