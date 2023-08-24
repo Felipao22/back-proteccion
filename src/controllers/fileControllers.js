@@ -41,7 +41,7 @@ const transporter = require("../helpers/mailer");
 // }
 
 async function uploadFile(req, res) {
-  const { kindId, branchBranchId } = req.body;
+  const { kindId, branchBranchId, emails } = req.body;
 
   try {
     const { originalname, mimetype: type, path: data, size: size } = req.file;
@@ -113,7 +113,7 @@ async function uploadFile(req, res) {
           // Enviar el correo electrónico
           const mailOptions = {
             from: `Protección Laboral ${process.env.EMAIL_USER}`,
-            to: branch.userEmail,
+            to: emails,
             subject: "Nuevo archivo subido",
             html: `<h3>Se ha subido un nuevo archivo:</h3>
             <ul>

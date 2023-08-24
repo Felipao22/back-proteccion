@@ -1,9 +1,16 @@
 // emailTemplate.js
 
-module.exports = function generateEmailTemplate (emailData) {
-    const { nombreEmpresa, email, decryptedPassword, nombreSede, ciudad, direccion } = emailData;
+module.exports = function generateEmailTemplate(emailData) {
+  const {
+    nombreEmpresa,
+    email,
+    decryptedPassword,
+    nombreSede,
+    ciudad,
+    direccion,
+  } = emailData;
 
-    return `
+  return `
     <!DOCTYPE html>
 
     <html lang="en" xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:v="urn:schemas-microsoft-com:vml">

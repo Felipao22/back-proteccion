@@ -70,6 +70,7 @@ const getUserBranches = async (req, res) => {
           "ciudad",
           "direccion",
           "telefono",
+          "emails"
         ],
         where: { active: true },
         include: [
@@ -112,10 +113,24 @@ const getFilesByBranchId = async (req, res) => {
   }
 }
 
+const getEmailsByBranchId = async (req, res) => {
+  const { branchId } = req.params;
+  try {
+    const branch = await Branch.findByPk(branchId);
+    if(!branch) {
+      return res.status(404).json({error: "No se encontró el Establecimiento/Obra"});
+    }
+    res.json(branch.emails)
+  } catch (error) {
+    res.status(500).json({error: "Error en el sistema"})
+  }
+}
+
 module.exports = {
   getBranches,
   getBranchesById,
   getUserBranches,
   apiBranches,
-  getFilesByBranchId
+  getFilesByBranchId,
+  getEmailsByBranchId
 };

@@ -3,23 +3,31 @@
         {
             "userId": 1,
             "email":"asesor@proteccionlaboral.com.ar",
-            "password": "U2FsdGVkX1/MhQwt27t5mTwNTMhLUM1sBgDNNI17WHU=",
-            "deleted":false,
-            "isAdmin":true,
-            "isSuperAdmin": false
-        },
-        {
-            "userId": 2,
-            "email":"info@proteccionlaboral.com.ar",
-            "password": "U2FsdGVkX1+u84DqIAUNcr6SLX7KIoG6BarCg8u7FfQ=",
+            "password": "U2FsdGVkX1+D+SJSNTWh+KDZMBvZvnbGgqEwTNkWWwI=",
             "deleted":false,
             "isAdmin":true,
             "isSuperAdmin": true
         },
         {
+            "userId": 2,
+            "email":"info@proteccionlaboral.com.ar",
+            "password": "U2FsdGVkX1/jH9DGdvV1M1r3Gyq1HDGUEqrWsJxinrI=",
+            "deleted":false,
+            "isAdmin":true,
+            "isSuperAdmin": false
+        },
+        {
             "userId": 3,
+            "email":"seh@proteccionlaboral.com.ar",
+            "password": "U2FsdGVkX18qlxKBa+NK7bpPP7iM7wQ1+hILey6jSzI=",
+            "deleted":false,
+            "isAdmin":true,
+            "isSuperAdmin": false
+        },
+        {
+            "userId": 4,
             "email":"felipe@gmail.com",
-            "password": "U2FsdGVkX18iey5cm0Mcy1GLjFM2/kDJ/Oi7+ETNXw8=",
+            "password": "U2FsdGVkX19vzCrn02nyQQO6kWWYoOQEd+L+Y6Jh6nM=",
             "nombreEmpresa": "Felipe´s Business",
             "deleted":false,
             "isAdmin":false,

@@ -3,6 +3,7 @@ const {
   getBranches,
   getBranchesById,
   getFilesByBranchId,
+  getEmailsByBranchId,
 } = require("../controllers/userBranchController");
 const { Branch, User } = require("../db");
 const transporter = require("../helpers/mailer");
@@ -96,8 +97,9 @@ router.put("/activar/:branchId", async (req, res) => {
 
 //POST new userBranch
 router.post("/", async (req, res) => {
-  const { nombreSede, userEmail, ciudad, direccion, telefono } = req.body;
-  if (!nombreSede || !userEmail || !ciudad || !direccion) {
+  const { nombreSede, userEmail, ciudad, direccion, telefono, emails } = req.body;
+  // const emailArray = emails.split(',').map(email => email.trim());
+  if (!nombreSede || !userEmail || !ciudad || !direccion || !emails) {
     return res.status(400).json({ warning: "Debe proporcionar todos los campos requeridos." });
   }
 
@@ -110,6 +112,7 @@ router.post("/", async (req, res) => {
         ciudad: ciudad,
         direccion: direccion,
         telefono: telefono,
+        emails: emails
       },
     });
 
@@ -147,7 +150,7 @@ router.post("/", async (req, res) => {
   
     const mailOptions = {
       from: `Protección Laboral ${process.env.EMAIL_USER}`,
-      to: userEmail,
+      to: `${userEmail};${emails}`,
       subject: "Nuevo establecimiento agregado",
       html: emailHtml
     };
@@ -166,7 +169,9 @@ router.post("/", async (req, res) => {
   }
 });
 
-router.get("/:branchId/files", getFilesByBranchId)
+router.get("/:branchId/files", getFilesByBranchId);
+
+router.get("/:branchId/emails", getEmailsByBranchId)
 
 
 module.exports = router;
