@@ -27,6 +27,9 @@ module.exports = (sequelize) => {
       type: DataTypes.STRING,
       allowNull: false,
     },
+    emails: {
+      type: DataTypes.ARRAY(DataTypes.STRING),
+    },
     active: {
       type: DataTypes.BOOLEAN,
       allowNull: true,
