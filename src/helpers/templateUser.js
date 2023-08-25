@@ -287,7 +287,7 @@ module.exports = function generateEmailTemplate(emailData) {
     <div class="" style="font-size: 12px; font-family: Arial, Helvetica Neue, Helvetica, sans-serif; mso-line-height-alt: 18px; color: #393d47; line-height: 1.5;">
     <ul style="line-height: 1.5; mso-line-height-alt: 18px; font-size: 18px; text-decoration: none;">
     <li>Email: ${email} </li>
-    <li>Constraseña: ${decryptedPassword}</li>
+    <li>Contraseña: ${decryptedPassword}</li>
     </ul>
     </div>
     </div>
