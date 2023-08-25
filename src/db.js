@@ -39,6 +39,7 @@ const {
 //         { logging: false, native: false }
 //       );
 
+
 // deploy
 const sequelize = new Sequelize(DB_RENDER, {
   logging: false, // set to console.log to see the raw SQL queries
