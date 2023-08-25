@@ -6,42 +6,11 @@ const iconv = require("iconv-lite");
 const encodings = ["utf-8", "latin1", "windows-1252"];
 const transporter = require("../helpers/mailer");
 
-//Fucion del POST Files
-// async function uploadFile(req, res) {
-//   const { kindId, branchBranchId } = req.body;
-//   console.log(branchBranchId)
-//   try {
-//     const {
-//       originalname:name,
-//       mimetype: type,
-//       path: data,
-//       size: size,
-//     } = req.file;
-
-//     if (!kindId || !branchBranchId) {
-//       return res
-//         .status(400)
-//         .json({ message: "Debe proporcionar el campo Establecimiento/Obras y tipo de archivo" });
-//     }
-
-//     const newFile = await File.create({
-//       name,
-//       type,
-//       data,
-//       size,
-//       kindId: kindId,
-//       branchBranchId: branchBranchId,
-//     });
-
-//     res.json({ message: 'Archivo subido correctamente', file: newFile });
-//   } catch (error) {
-//     console.error("Error al subir el archivo:", error);
-//     res.status(500).json({ message: "Ocurrió un error al subir el archivo" });
-//   }
-// }
 
 async function uploadFile(req, res) {
-  const { kindId, branchBranchId, emails } = req.body;
+  const { kindId, branchBranchId, emails, emailText } = req.body;
+
+  const paragraphs = emailText.split("/n");
 
   try {
     const { originalname, mimetype: type, path: data, size: size } = req.file;
@@ -116,10 +85,13 @@ async function uploadFile(req, res) {
             to: emails,
             subject: "Nuevo archivo subido",
             html: `<h3>Se ha subido un nuevo archivo:</h3>
-            <ul>
-              <li>Nombre del archivo: ${fileNameWithDate}</li>
-              <li>Tipo del archivo: ${kind.name}.</li>
+            <ul style="font-size: 16px;">
+              <li>Nombre del archivo: <span style="font-size: 16px; font-weight: 700">${decodedName}<span/></li>
+              <li>Tipo del archivo: <span style="font-size: 16px; font-weight: 700">${kind.name}.<span/></li>
             </ul>
+            <p style="font-size: 14px; color: #333;">
+            ${paragraphs.map(paragraph => paragraph.replace(/\n/g, "<br />")).join("<br /><br />")}
+            <p/>
             `,
           };
         transporter.sendMail(mailOptions, (error, info) => {
