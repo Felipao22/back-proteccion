@@ -11,7 +11,26 @@ const cors = require('cors')
 
 server.name = 'API';
 
-server.use(cors());
+server.use(cors({
+  origin: (origin, callback) => {
+    const ACCEPTED_ORIGINS = [
+      'http://localhost:5173',
+      'http://localhost:3001',
+      'https://back-proteccion.onrender.com',
+      'https://proteccion-app.vercel.app'
+    ]
+
+    if (ACCEPTED_ORIGINS.includes(origin)) {
+      return callback(null, true)
+    }
+
+    if (!origin) {
+      return callback(null, true)
+    }
+
+    return callback(new Error('Not allowed by CORS'))
+  }
+}))
 server.use(bodyParser.urlencoded({ extended: true, limit: '50mb' }));
 server.use(bodyParser.json({ limit: '50mb' }));
 server.use(cookieParser());
