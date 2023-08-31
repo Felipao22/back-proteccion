@@ -4,8 +4,7 @@ const path = require("path");
 const fs = require("fs");
 const iconv = require("iconv-lite");
 const encodings = ["utf-8", "latin1", "windows-1252"];
-const transporter = require("../helpers/mailer");
-
+const transporterFile = require("../helpers/mailerFile");
 
 async function uploadFile(req, res) {
   const { kindId, branchBranchId, emails, emailText } = req.body;
@@ -81,27 +80,59 @@ async function uploadFile(req, res) {
         if (branch && kind) {
           // Enviar el correo electrónico
           const mailOptions = {
-            from: `Protección Laboral ${process.env.EMAIL_USER}`,
+            from: `Protección Laboral ${process.env.EMAIL_USER_FILE}`,
             to: emails,
-            subject: "Nuevo archivo subido",
-            html: `<h3>Se ha subido un nuevo archivo:</h3>
-            <ul style="font-size: 16px;">
-              <li>Nombre del archivo: <span style="font-size: 16px; font-weight: 700">${decodedName}<span/></li>
-              <li>Tipo del archivo: <span style="font-size: 16px; font-weight: 700">${kind.name}.<span/></li>
+            subject: "Notificación importante",
+            html: `<p>Se ha cargado en su base de datos de archivos y relevamientos de Higiene y Seguridad información importante, para interiorirarse del contenido y/o acciones a ejecutar con el fin de neutralizar, corregir o eliminar condiciones que pueden ser de ejecución inmediata lo invitamos a ingresar al link para verificar el contenido del siguiente archivo:</p>
+            <ul style="font-size: 13px;">
+              <li>Nombre del archivo: <span style="font-size: 14px; font-weight: 700">${decodedName}<span/></li>
+              <li>Tipo del archivo: <span style="font-size: 14px; font-weight: 700">${
+                kind.name
+              }.<span/></li>
             </ul>
             <p style="font-size: 14px; color: #333;">
-            ${paragraphs.map(paragraph => paragraph.replace(/\n/g, "<br />")).join("<br /><br />")}
+            ${paragraphs
+              .map((paragraph) => paragraph.replace(/\n/g, "<br />"))
+              .join("<br /><br />")}
             <p/>
+            <div style="text-align: center;">
+            <a href="https://proteccion-app.vercel.app/login" style="text-decoration: none;
+            display: inline-block;
+            color: #ffffff;
+            background-color: #6b67f5;
+            border-radius: 4px;
+            width: auto;
+            border-top: 0px solid #8a3b8f;
+            border-right: 0px solid #8a3b8f;
+            border-bottom: 0px solid #8a3b8f;
+            border-left: 0px solid #8a3b8f;
+            padding-top: 5px;
+            padding-bottom: 5px;
+            font-family: Arial,Helvetica Neue,Helvetica,sans-serif;
+            font-size: 16px;
+            text-align: center;
+            word-break: keep-all">
+          <span style="padding-left: 20px;
+          padding-right: 20px;
+          font-size: 16px;
+          display: inline-block;
+          letter-spacing: normal;">
+          <span style="word-break: break-word;
+          line-height: 32px;">Iniciar Sesión
+          </span>
+          </span>
+            </a>
+            </div>
             `,
           };
-        transporter.sendMail(mailOptions, (error, info) => {
-          if (error) {
-            console.error("Error al enviar el correo:", error);
-          } else {
-            console.log("Correo enviado:", info.response);
-          }
+          transporterFile.sendMail(mailOptions, (error, info) => {
+            if (error) {
+              console.error("Error al enviar el correo:", error);
+            } else {
+              console.log("Correo enviado:", info.response);
+            }
           });
-      }
+        }
         return res.json({
           message: "Archivo subido correctamente",
           file: newFile,
@@ -119,7 +150,6 @@ async function uploadFile(req, res) {
     res.status(500).json({ message: "Ocurrió un error al subir el archivo" });
   }
 }
-
 
 //Fucion del GET Files, redirecciona segun haya query name o no
 function getFiles(name) {
