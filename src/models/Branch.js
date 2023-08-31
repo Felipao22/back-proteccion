@@ -35,5 +35,8 @@ module.exports = (sequelize) => {
       allowNull: true,
       defaultValue: true,
     },
+    accessUser: {
+      type: DataTypes.ARRAY(DataTypes.STRING),
+    }
   });
 };

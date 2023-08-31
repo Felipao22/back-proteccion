@@ -1,5 +1,5 @@
 const { Router } = require ("express");
-const { getKind, getKindById } = require("../controllers/kindControllers");
+const { getKindController, getKindByIdController } = require("../controllers/kindControllers");
 const router = Router();
 
 
@@ -20,26 +20,8 @@ const router = Router();
 
 //GET Category
 // http://localhost:3001/kind
-router.get('/', (req,res) => {   
-    const {name} = req.query 
-    try {
-        return getKind(name).then(kind => 
-            res.send(kind));
-            
-        } catch (error) {
-            return res.send(error);
-        }
-});
+router.get('/', getKindController);
 
-router.get('/:id', (req, res) => {
-    const {id} = req.params;
-    try {
-        getKindById(id).then(kind => {
-            typeof kind === 'object' ? res.json(kind) : res.status(404).json(kind);
-        });
-    } catch (error) {
-        res.send(error)
-    }
-})
+router.get('/:id', getKindByIdController)
 
 module.exports = router;

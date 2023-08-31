@@ -29,6 +29,22 @@ const apiKind = async () => {
 	}
 }
 
+async function getKindByIdController(req, res) {
+  const { id } = req.params;
+
+  try {
+      const kind = await getKindById(id);
+
+      if (typeof kind === 'object') {
+          res.json(kind);
+      } else {
+          res.status(404).json(kind);
+      }
+  } catch (error) {
+      res.status(500).send(error.message); // Accedemos al mensaje del error
+  }
+}
+
 async function getKindById(id) {
   try {
       const foundKind = await Kind.findByPk(id);
@@ -70,6 +86,24 @@ function getKind(name) {
   }
 }
 
+async function getKindController(req, res) {
+  const { name } = req.query;
+  
+  try {
+      let kind;
+
+      if (name) {
+          kind = await getKindByName(name);
+      } else {
+          kind = await getAllKinds();
+      }
+
+      res.send(kind);
+  } catch (error) {
+      res.status(500).send(error.message); // Accedemos al mensaje del error
+  }
+}
+
 async function getAllKinds() {
   try {
     const foundKinds = await Kind.findAll({});
@@ -84,6 +118,6 @@ async function getAllKinds() {
 module.exports = {
   addKinds,
   apiKind,
-  getKind,
-  getKindById
+  getKindController,
+  getKindByIdController
 };

@@ -124,7 +124,7 @@ async function uploadFile(req, res) {
 //Fucion del GET Files, redirecciona segun haya query name o no
 function getFiles(name) {
   if (name) {
-    return getFilessByName(name);
+    return getFilesByName(name);
   } else {
     return getAllFiles();
   }
@@ -143,7 +143,7 @@ async function getAllFiles() {
 
 //Funcion interna, es llamada por getFiles cuando viene query name
 //http://localhost:3001/file?name=nombre
-async function getFilessByName(name) {
+async function getFilesByName(name) {
   try {
     const foundFilessName = await File.findAll({
       where: {
@@ -212,6 +212,6 @@ module.exports = {
   uploadFile,
   deleteFileById,
   getAllFiles,
-  getFilessByName,
+  getFilesByName,
   downloadFile,
 };
