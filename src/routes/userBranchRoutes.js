@@ -8,6 +8,7 @@ const {
   banBranchController,
   activateBranchController,
   createBranchController,
+  deleteBranchController,
 } = require("../controllers/userBranchController");
 
 const router = Router();
@@ -31,6 +32,8 @@ router.post("/", createBranchController)
 router.get("/:branchId/files", getFilesByBranchId);
 
 router.get("/:branchId/emails", getEmailsByBranchId)
+
+router.delete("/:branchId", deleteBranchController)
 
 
 module.exports = router;

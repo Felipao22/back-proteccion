@@ -1,5 +1,5 @@
 const { Router } = require("express");
-const { getUsersController, getUserByEmailController, updateUserByEmailController, banUserController, activateUserController, createUserController, loginController, logoutController, createEmployeeController } = require("../controllers/userControllers");
+const { getUsersController, getUserByEmailController, updateUserByEmailController, banUserController, activateUserController, createUserController, loginController, logoutController, createEmployeeController, deleteUserController } = require("../controllers/userControllers");
 const { getUserBranches } = require("../controllers/userBranchController");
 
 const router = Router();
@@ -26,5 +26,7 @@ router.post("/employee", createEmployeeController);
 router.post("/login", loginController);
 
 router.post("/logout", logoutController);
+
+router.delete("/:email", deleteUserController)
 
 module.exports = router;

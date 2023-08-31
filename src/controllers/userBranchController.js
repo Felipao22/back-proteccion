@@ -205,6 +205,32 @@ async function createBranchController(req, res) {
   }
 }
 
+async function deleteBranchController(req, res) {
+  const { branchId } = req.params;
+
+  try {
+    const branch = await Branch.findOne({ where: { branchId } });
+
+    if (!branch) {
+      return res.status(404).send("Establecimiento/Obra no encontrado");
+    }
+
+    await deleteBranch(branchId);
+
+    return res.status(200).send("Establecimiento/Obra eliminado exitosamente");
+  } catch (e) {
+    return res.status(500).send(`Error: ${e.message}`);
+  }
+}
+
+async function deleteBranch(branchId) {
+  try {
+    await Branch.destroy({ where: { branchId } });
+  } catch (e) {
+    throw e;
+  }
+}
+
 // SAVE DATA FROM JSON TO DB
 const apiBranches = async () => {
   try {
@@ -315,5 +341,6 @@ module.exports = {
   updateBranchByIdController,
   banBranchController,
   activateBranchController,
-  createBranchController
+  createBranchController,
+  deleteBranchController
 };
