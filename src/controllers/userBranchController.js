@@ -49,9 +49,9 @@ async function updateBranchByIdController(req, res) {
   try {
     const result = await updateBranchById(branchId, modification);
     if (result) {
-      res.status(200).json({ message: "Sede modificada", modification });
+      res.status(200).json({ message: "Establecimiento/Obra modificado", modification });
     } else {
-      res.status(404).send("Sede no encontrada");
+      res.status(404).send("Establecimiento/Obra no encontrado");
     }
   } catch (e) {
     res.status(500).send(`Error: ${e.message}`);

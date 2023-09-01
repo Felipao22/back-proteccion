@@ -302,6 +302,46 @@ async function deleteUser(email) {
   }
 }
 
+async function changePasswordController(req, res) {
+  const { email } = req.params;
+  const { oldPassword, newPassword } = req.body;
+  
+  try {
+    const user = await User.findOne({ where: { email } });
+
+    if (!user) {
+      return res.status(404).send("Usuario no encontrado");
+    }
+
+    // Decrypt and check if the old password matches
+    const decryptedPassword = CryptoJS.AES.decrypt(
+      user.password,
+      process.env.PASS_SEC
+    ).toString(CryptoJS.enc.Utf8);
+
+    if (decryptedPassword !== oldPassword) {
+      return res.status(401).json({ error: "Contraseña anterior incorrecta" });
+    }
+
+    // Encrypt and update the new password
+    const encryptedNewPassword = CryptoJS.AES.encrypt(
+      newPassword,
+      process.env.PASS_SEC
+    ).toString();
+
+    await User.update(
+      { password: encryptedNewPassword },
+      { where: { email } }
+    );
+
+    return res.status(200).send("Contraseña actualizada exitosamente");
+  } catch (error) {
+    return res.status(500).send(`Error: ${error.message}`);
+  }
+}
+
+
+
 const apiUsers = async () => {
   try {
     const foundUsers = await User.findOne();
@@ -337,5 +377,6 @@ module.exports = {
   loginController,
   logoutController,
   createEmployeeController,
-  deleteUserController
+  deleteUserController,
+  changePasswordController
 };
