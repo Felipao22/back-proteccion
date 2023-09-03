@@ -3,6 +3,7 @@ const users = jsonUsers.usuarios;
 const { User, Branch } = require("../db");
 const CryptoJS = require("crypto-js");
 const jwt = require("jsonwebtoken");
+const transporter = require("../helpers/mailer")
 
 //Funcion del GET / GET ALL USERS
 async function getUsersController(req, res) {
@@ -340,6 +341,127 @@ async function changePasswordController(req, res) {
   }
 }
 
+async function forgotPasswordController(req, res) {
+  const { email } = req.body;
+
+  try {
+    // Buscar al usuario por su correo electrónico
+    const user = await User.findOne({ where: { email } });
+
+    if (!user) {
+      return res.status(404).send("Usuario no encontrado");
+    }
+
+    // Generar un token de restablecimiento de contraseña
+    const resetToken = jwt.sign({ email }, process.env.JWT_SEC, {
+      expiresIn: "1h", // El token expira en 1 hora
+    });
+
+
+    // Construir el enlace de restablecimiento de contraseña
+    const resetLink = `http://localhost:5173/resetPassword?token=${resetToken}`;
+
+    // Enviar el enlace por correo electrónico
+    await sendResetPasswordEmail(email, resetLink);
+
+    return res.status(200).send("Se ha enviado un enlace para restablecer la contraseña por correo electrónico");
+  } catch (error) {
+    return res.status(500).send(`Error: ${error.message}`);
+  }
+}
+
+
+async function resetPasswordController(req, res) {
+  const { newPassword } = req.body;
+  const token = req.params.token; // Obtener el token desde la consulta
+
+  console.log(newPassword)
+  if (!token) {
+    return res.status(400).send("Token de restablecimiento de contraseña no proporcionado");
+  }
+
+  try {
+    // Verificar y decodificar el token de restablecimiento de contraseña
+    const decodedToken = jwt.verify(token, process.env.JWT_SEC);
+    // Extraer el correo electrónico del token
+    const { email } = decodedToken;
+
+    // Buscar al usuario por su correo electrónico
+    const user = await User.findOne({ where: { email } });
+
+    if (!user) {
+      return res.status(404).send("Usuario no encontrado");
+    }
+
+    // Encriptar la nueva contraseña
+    const encryptedNewPassword = CryptoJS.AES.encrypt(
+      newPassword,
+      process.env.PASS_SEC
+    ).toString();
+
+    // Actualizar la contraseña del usuario
+    await User.update(
+      { password: encryptedNewPassword },
+      { where: { email } }
+    );
+
+    return res.status(200).send("Contraseña restablecida exitosamente");
+  } catch (error) {
+    return res.status(500).send(`Error: ${error.message}`);
+  }
+}
+
+
+// Función para enviar el correo electrónico de restablecimiento de contraseña
+async function sendResetPasswordEmail(email, resetLink) {
+
+  const mailOptions = {
+    from: `Protección Laboral ${process.env.EMAIL_USER}`,
+    to: email,
+    subject: "Restablecimiento de contraseña",
+    html: `
+      <p>Haz clic en el siguiente enlace para restablecer su contraseña:</p>
+      <div style="text-align: center;">
+            <a href="${resetLink}" style="text-decoration: none;
+            display: inline-block;
+            color: #ffffff;
+            background-color: #6b67f5;
+            border-radius: 4px;
+            width: auto;
+            border-top: 0px solid #8a3b8f;
+            border-right: 0px solid #8a3b8f;
+            border-bottom: 0px solid #8a3b8f;
+            border-left: 0px solid #8a3b8f;
+            padding-top: 5px;
+            padding-bottom: 5px;
+            font-family: Arial,Helvetica Neue,Helvetica,sans-serif;
+            font-size: 16px;
+            text-align: center;
+            word-break: keep-all">
+          <span style="padding-left: 20px;
+          padding-right: 20px;
+          font-size: 16px;
+          display: inline-block;
+          letter-spacing: normal;">
+          <span style="word-break: break-word;
+          line-height: 32px;">Restablecer contraseña
+          </span>
+          </span>
+            </a>
+            </div>
+        <p>O ingresar al siguiente link:</p>
+        <p><a href="${resetLink}">${resetLink}</a></p>
+    `,
+  };
+
+  transporter.sendMail(mailOptions, (error, info) => {
+    if (error) {
+      console.error("Error al enviar el correo:", error);
+    } else {
+      console.log("Correo enviado:", info.response);
+    }
+  });
+}
 
 
 const apiUsers = async () => {
@@ -378,5 +500,7 @@ module.exports = {
   logoutController,
   createEmployeeController,
   deleteUserController,
-  changePasswordController
+  changePasswordController,
+  forgotPasswordController,
+  resetPasswordController
 };

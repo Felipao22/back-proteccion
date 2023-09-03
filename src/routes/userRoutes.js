@@ -1,5 +1,5 @@
 const { Router } = require("express");
-const { getUsersController, getUserByEmailController, updateUserByEmailController, banUserController, activateUserController, createUserController, loginController, logoutController, createEmployeeController, deleteUserController, changePasswordController } = require("../controllers/userControllers");
+const { getUsersController, getUserByEmailController, updateUserByEmailController, banUserController, activateUserController, createUserController, loginController, logoutController, createEmployeeController, deleteUserController, changePasswordController, forgotPasswordController, resetPasswordController } = require("../controllers/userControllers");
 const { getUserBranches } = require("../controllers/userBranchController");
 
 const router = Router();
@@ -30,5 +30,10 @@ router.post("/logout", logoutController);
 router.delete("/:email", deleteUserController);
 
 router.put("/changePsw/:email", changePasswordController);
+
+router.post("/forgot-password", forgotPasswordController);
+
+router.put("/resetPassword/:token", resetPasswordController);
+
 
 module.exports = router;
