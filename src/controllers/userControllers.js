@@ -357,9 +357,14 @@ async function forgotPasswordController(req, res) {
       expiresIn: "1h", // El token expira en 1 hora
     });
 
+    // Determinar la URL base según el entorno
+    const baseUrl = process.env.NODE_ENV === "production"
+    ? process.env.DEVELOPMENT_BASE_URL
+      : process.env.PRODUCTION_URL;
 
     // Construir el enlace de restablecimiento de contraseña
-    const resetLink = `http://localhost:5173/resetPassword?token=${resetToken}`;
+    const resetLink = `${baseUrl}/resetPassword?token=${resetToken}`;
+
 
     // Enviar el enlace por correo electrónico
     await sendResetPasswordEmail(email, resetLink);
