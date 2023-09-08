@@ -11,17 +11,42 @@ module.exports = (sequelize) => {
     },
     email: {
       type: DataTypes.STRING,
-      allowNull: false,
+
       primaryKey: true,
     },
     password: {
       type: DataTypes.STRING,
-      allowNull: false,
+
     },
     nombreEmpresa: {
       type: DataTypes.STRING,
     },
     cuit: {
+      type: DataTypes.STRING,
+    },
+    nombreSede: {
+      type: DataTypes.STRING,
+
+    },
+    ciudad: {
+      type: DataTypes.STRING,
+
+    },
+    direccion: {
+      type: DataTypes.STRING,
+
+    },
+    telefono: {
+      type: DataTypes.STRING,
+
+    },
+    emails: {
+      type: DataTypes.ARRAY(DataTypes.STRING),
+    },
+    accessUser: {
+      type: DataTypes.ARRAY(DataTypes.STRING),
+    },
+    emailJefe: {
       type: DataTypes.STRING,
     },
     deleted: {

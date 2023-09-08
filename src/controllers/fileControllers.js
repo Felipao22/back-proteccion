@@ -1,4 +1,4 @@
-const { File, Kind, Branch, User } = require("../db");
+const { File, Kind, User } = require("../db");
 const { Op } = require("sequelize");
 const path = require("path");
 const fs = require("fs");
@@ -7,14 +7,14 @@ const encodings = ["utf-8", "latin1", "windows-1252"];
 const transporterFile = require("../helpers/mailerFile");
 
 async function uploadFile(req, res) {
-  const { kindId, branchBranchId, emails, emailText } = req.body;
+  const { kindId, userEmail, emails, emailText } = req.body;
 
   const paragraphs = emailText.split("/n");
 
   try {
     const { originalname, mimetype: type, path: data, size: size } = req.file;
 
-    if (!kindId || !branchBranchId) {
+    if (!kindId || !userEmail) {
       return res.status(400).json({
         message:
           "Debe proporcionar el campo Establecimiento/Obras y tipo de archivo",
@@ -47,7 +47,7 @@ async function uploadFile(req, res) {
           data,
           size,
           kindId,
-          branchBranchId,
+          userEmail,
         });
         return res.json({
           message: "Archivo subido correctamente",
@@ -67,17 +67,14 @@ async function uploadFile(req, res) {
           data,
           size,
           kindId,
-          branchBranchId,
+          userEmail,
         });
-        // Obtener el correo electrónico asociado a la rama (branch) desde alguna fuente
-        // Obtener la información de la rama y el tipo de archivo utilizando las relaciones
-        const branch = await Branch.findOne({
-          where: { branchId: branchBranchId },
-          attributes: ["userEmail"], // Asumiendo que el email está en la columna userEmail
-          include: [{ model: User, attributes: ["email"] }], // Incluir la información del usuario asociado a la rama
+        
+        const user = await User.findOne({
+          where: { email: userEmail },
         });
 
-        if (branch && kind) {
+        if (user && kind) {
           // Enviar el correo electrónico
           const mailOptions = {
             from: `Protección Laboral ${process.env.EMAIL_USER_FILE}`,
