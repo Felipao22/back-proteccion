@@ -1,37 +1,43 @@
 {
-    "usuarios":[
-        {
-            "userId": 1,
-            "email":"asesor@proteccionlaboral.com.ar",
-            "password": "U2FsdGVkX1+D+SJSNTWh+KDZMBvZvnbGgqEwTNkWWwI=",
-            "deleted":false,
-            "isAdmin":true,
-            "isSuperAdmin": true
-        },
-        {
-            "userId": 2,
-            "email":"info@proteccionlaboral.com.ar",
-            "password": "U2FsdGVkX1/jH9DGdvV1M1r3Gyq1HDGUEqrWsJxinrI=",
-            "deleted":false,
-            "isAdmin":true,
-            "isSuperAdmin": false
-        },
-        {
-            "userId": 3,
-            "email":"seh@proteccionlaboral.com.ar",
-            "password": "U2FsdGVkX18qlxKBa+NK7bpPP7iM7wQ1+hILey6jSzI=",
-            "deleted":false,
-            "isAdmin":true,
-            "isSuperAdmin": false
-        },
-        {
-            "userId": 4,
-            "email":"felipe@gmail.com",
-            "password": "U2FsdGVkX19vzCrn02nyQQO6kWWYoOQEd+L+Y6Jh6nM=",
-            "nombreEmpresa": "Felipe´s Business",
-            "deleted":false,
-            "isAdmin":false,
-            "isSuperAdmin": false
-        }
-    ]
+  "usuarios": [
+    {
+      "userId": 1,
+      "email": "asesor@proteccionlaboral.com.ar",
+      "password": "U2FsdGVkX1+D+SJSNTWh+KDZMBvZvnbGgqEwTNkWWwI=",
+      "deleted": false,
+      "isAdmin": true,
+      "isSuperAdmin": true
+    },
+    {
+      "userId": 2,
+      "email": "info@proteccionlaboral.com.ar",
+      "password": "U2FsdGVkX1/jH9DGdvV1M1r3Gyq1HDGUEqrWsJxinrI=",
+      "deleted": false,
+      "isAdmin": true,
+      "isSuperAdmin": false
+    },
+    {
+      "userId": 3,
+      "email": "seh@proteccionlaboral.com.ar",
+      "password": "U2FsdGVkX18qlxKBa+NK7bpPP7iM7wQ1+hILey6jSzI=",
+      "deleted": false,
+      "isAdmin": true,
+      "isSuperAdmin": false
+    },
+    {
+      "userId": 4,
+      "email": "felipe@gmail.com",
+      "password": "U2FsdGVkX19vzCrn02nyQQO6kWWYoOQEd+L+Y6Jh6nM=",
+      "nombreEmpresa": "Felipe´s Business",
+      "nombreSede": "Freelance - Establecimiento/Obra: Concaran - Malvinas 403",
+      "direccion": "Malvinas 403",
+      "ciudad": "Concaran",
+      "cuit": 20384383085,
+      "telefono": "2664553869",
+      "emails": ["felipeaviani@gmail.com", "felomatrixrelouder@hotmail.com"],
+      "deleted": false,
+      "isAdmin": false,
+      "isSuperAdmin": false
+    }
+  ]
 }

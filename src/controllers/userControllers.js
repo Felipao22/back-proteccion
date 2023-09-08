@@ -1,9 +1,10 @@
 const jsonUsers = require("../json/users.json");
 const users = jsonUsers.usuarios;
-const { User, Branch } = require("../db");
+const { User, File } = require("../db");
 const CryptoJS = require("crypto-js");
 const jwt = require("jsonwebtoken");
-const transporter = require("../helpers/mailer")
+const transporter = require("../helpers/mailer");
+const generateEmailTemplate = require("../helpers/templateUser")
 
 //Funcion del GET / GET ALL USERS
 async function getUsersController(req, res) {
@@ -18,7 +19,7 @@ async function getUsersController(req, res) {
 async function getUsers() {
   try {
     const foundUsers = await User.findAll({
-      include: [{ model: Branch }],
+      include: [{ model: File }],
     });
     return foundUsers;
   } catch (e) {
@@ -44,7 +45,7 @@ async function getUserByEmailController(req, res) {
 async function getUserByEmail(email) {
   try {
     const foundUser = await User.findByPk(email, {
-      include: [{ model: Branch }],
+      include: [{ model: File }],
     });
     return foundUser;
   } catch (e) {
@@ -143,27 +144,130 @@ async function activateUser(email) {
   }
 }
 
+// async function createUserController(req, res) {
+//   try {
+//     const [user, created] = await User.findOrCreate({
+//       where: {
+//         email: req.body.email,
+//         nombreEmpresa: req.body.nombreEmpresa,
+//         cuit: req.body.cuit,
+//         nombreSede: req.body.nombreSede,
+//         ciudad: req.body.ciudad,
+//         direccion: req.body.direccion,
+//         telefono: req.body.telefono,
+//         emails: req.body.emails,
+//         accesUser: req.body.accessUser,
+//         password: CryptoJS.AES.encrypt(
+//           req.body.password,
+//           process.env.PASS_SEC
+//         ).toString(),
+//       },
+//     });
+
+//     if (created) {
+//       res.status(201).json({ message: "Establecimiento/Obra creado", created });
+//     } else {
+//       res.status(200).json({ warning: "El Establecimiento/Obra ya existe", user });
+//     }
+//   } catch (error) {
+//     res.status(500).send(`Error: ${error}`);
+//   }
+// }
+
 async function createUserController(req, res) {
+  const {
+    nombreSede,
+    ciudad,
+    direccion,
+    telefono,
+    emails,
+    accessUser,
+    email,
+    password,
+    nombreEmpresa,
+    cuit,
+    emailJefe
+  } = req.body;
+
+  if (
+    !nombreSede ||
+    !ciudad ||
+    !direccion ||
+    !emails ||
+    !email ||
+    !password ||
+    !nombreEmpresa ||
+    !cuit ||
+    !emailJefe
+  ) {
+    return res
+      .status(400)
+      .json({ warning: "Debe proporcionar todos los campos requeridos." });
+  }
+
   try {
-    const [user, created] = await User.findOrCreate({
+    const branchName = `${nombreSede} - Establecimiento/Obra: ${ciudad} - ${direccion}`;
+    const [newUser, created] = await User.findOrCreate({
       where: {
-        email: req.body.email,
-        nombreEmpresa: req.body.nombreEmpresa,
-        cuit: req.body.cuit,
+        nombreSede: branchName,
+        ciudad: ciudad,
+        direccion: direccion,
+        telefono: telefono,
+        emails: emails,
+        accessUser: accessUser,
+        email: email,
         password: CryptoJS.AES.encrypt(
-          req.body.password,
+          password,
           process.env.PASS_SEC
         ).toString(),
+        nombreEmpresa: nombreEmpresa,
+        cuit: cuit,
+        emailJefe: emailJefe
       },
     });
 
-    if (created) {
-      res.status(201).json({ message: "Empresa creada", created });
-    } else {
-      res.status(200).json({ warning: "La empresa ya existe", user });
+    if (!created) {
+      return res
+        .status(409)
+        .json({ warning: "Establecimiento/Obra ya existente." });
     }
+
+    const userCompany = nombreEmpresa;
+    const userPassword = password;
+
+    const emailData = {
+      nombreEmpresa: userCompany,
+      email: email,
+      decryptedPassword: userPassword,
+      nombreSede: nombreSede,
+      ciudad: ciudad,
+      direccion: direccion,
+    };
+
+    const emailHtml = generateEmailTemplate(emailData);
+
+    const mailOptions = {
+      from: `Protección Laboral ${process.env.EMAIL_USER}`,
+      to: `${email};${emails};${emailJefe}`,
+      subject: "Nuevo establecimiento agregado",
+      html: emailHtml,
+    };
+
+    transporter.sendMail(mailOptions, (error, info) => {
+      if (error) {
+        console.error("Error al enviar el correo:", error);
+      } else {
+        console.log("Correo enviado:", info.response);
+      }
+    });
+
+    res
+      .status(201)
+      .json({ message: "Establecimiento/Obra agregada", newUser });
   } catch (error) {
-    res.status(500).send(`Error: ${error}`);
+    return res
+      .status(500)
+      .json(`Ocurrió un error al agregar el Establecimiento/Obra: ${error}`);
   }
 }
 
@@ -220,10 +324,6 @@ async function loginController(req, res) {
 
     const userLogin = await User.findOne({
       where: { email },
-      include: {
-        model: Branch,
-        where: { active: true },
-      },
     });
 
     if (!userLogin) {
@@ -306,7 +406,7 @@ async function deleteUser(email) {
 async function changePasswordController(req, res) {
   const { email } = req.params;
   const { oldPassword, newPassword } = req.body;
-  
+
   try {
     const user = await User.findOne({ where: { email } });
 
@@ -330,10 +430,7 @@ async function changePasswordController(req, res) {
       process.env.PASS_SEC
     ).toString();
 
-    await User.update(
-      { password: encryptedNewPassword },
-      { where: { email } }
-    );
+    await User.update({ password: encryptedNewPassword }, { where: { email } });
 
     return res.status(200).send("Contraseña actualizada exitosamente");
   } catch (error) {
@@ -358,38 +455,49 @@ async function forgotPasswordController(req, res) {
     });
 
     // Determinar la URL base según el entorno
-    const baseUrl = process.env.NODE_ENV === "production"
-    ? process.env.DEVELOPMENT_BASE_URL
-      : process.env.PRODUCTION_URL;
+    const baseUrl =
+      process.env.NODE_ENV === "production"
+        ? process.env.DEVELOPMENT_BASE_URL
+        : process.env.PRODUCTION_URL;
 
     // Construir el enlace de restablecimiento de contraseña
     const resetLink = `${baseUrl}/resetPassword?token=${resetToken}`;
 
-
     // Enviar el enlace por correo electrónico
     await sendResetPasswordEmail(email, resetLink);
 
-    return res.status(200).send("Se ha enviado un enlace para restablecer la contraseña por correo electrónico");
+    return res
+      .status(200)
+      .send(
+        "Se ha enviado un enlace para restablecer la contraseña por correo electrónico"
+      );
   } catch (error) {
     return res.status(500).send(`Error: ${error.message}`);
   }
 }
 
-
 async function resetPasswordController(req, res) {
   const { newPassword } = req.body;
   const token = req.params.token; // Obtener el token desde la consulta
 
-  console.log(newPassword)
+  console.log(newPassword);
   if (!token) {
-    return res.status(400).send("Token de restablecimiento de contraseña no proporcionado");
+    return res
+      .status(400)
+      .send("Token de restablecimiento de contraseña no proporcionado");
   }
 
   try {
     // Verificar y decodificar el token de restablecimiento de contraseña
     const decodedToken = jwt.verify(token, process.env.JWT_SEC);
     // Extraer el correo electrónico del token
-    const { email } = decodedToken;
+    const { email, exp } = decodedToken;
+
+    // Verificar si el token ha caducado
+    const currentTimestamp = Math.floor(Date.now() / 1000); // Obtener la marca de tiempo actual en segundos
+    if (exp < currentTimestamp) {
+      return res.status(401).send("El token de restablecimiento de contraseña ha caducado");
+    }
 
     // Buscar al usuario por su correo electrónico
     const user = await User.findOne({ where: { email } });
@@ -405,13 +513,13 @@ async function resetPasswordController(req, res) {
     ).toString();
 
     // Actualizar la contraseña del usuario
-    await User.update(
-      { password: encryptedNewPassword },
-      { where: { email } }
-    );
+    await User.update({ password: encryptedNewPassword }, { where: { email } });
 
     return res.status(200).send("Contraseña restablecida exitosamente");
   } catch (error) {
+    if (error.name === "TokenExpiredError") {
+      return res.status(401).send("El token de restablecimiento de contraseña ha caducado");
+    }
     return res.status(500).send(`Error: ${error.message}`);
   }
 }
@@ -419,7 +527,6 @@ async function resetPasswordController(req, res) {
 
 // Función para enviar el correo electrónico de restablecimiento de contraseña
 async function sendResetPasswordEmail(email, resetLink) {
-
   const mailOptions = {
     from: `Protección Laboral ${process.env.EMAIL_USER}`,
     to: email,
@@ -468,6 +575,37 @@ async function sendResetPasswordEmail(email, resetLink) {
   });
 }
 
+const getFilesByEmail = async (req, res) => {
+  const {email} = req.params
+  try {
+    const user = await User.findByPk(email, {
+      include: {
+        model: File,
+      },
+    });
+
+    if (!user) {
+      return res.status(404).json({ error: 'No se encontró Establecimiento/Obra' });
+    }
+    res.json(user.files);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Error en el sistema' });
+  }
+}
+
+const getEmailsByEmail = async (req, res) => {
+  const { email } = req.params;
+  try {
+    const user = await User.findByPk(email);
+    if(!user) {
+      return res.status(404).json({error: "No se encontró el Establecimiento/Obra"});
+    }
+    res.json(user.emails)
+  } catch (error) {
+    res.status(500).json({error: "Error en el sistema"})
+  }
+}
 
 const apiUsers = async () => {
   try {
@@ -507,5 +645,7 @@ module.exports = {
   deleteUserController,
   changePasswordController,
   forgotPasswordController,
-  resetPasswordController
+  resetPasswordController,
+  getFilesByEmail,
+  getEmailsByEmail
 };

@@ -23,7 +23,6 @@ const {apiCity} = require('./src/controllers/cityControllers')
 const {apiCategory} = require('./src/controllers/categoryControllers.js')
 const {apiKind} = require('./src/controllers/kindControllers.js');
 const { apiUsers } = require('./src/controllers/userControllers.js');
-const { apiBranches} = require('./src/controllers/userBranchController.js');
 
 const PORT = 3001 ?? process.env.PORT;
 
@@ -34,7 +33,6 @@ conn.sync({ force: false }).then(() => {
     await apiCategory();
     await apiKind();
     await apiUsers();
-    await apiBranches();
     console.log(`Server is listening on port ${PORT}`); // eslint-disable-line no-console
   });
 });
