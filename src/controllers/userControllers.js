@@ -144,35 +144,6 @@ async function activateUser(email) {
   }
 }
 
-// async function createUserController(req, res) {
-//   try {
-//     const [user, created] = await User.findOrCreate({
-//       where: {
-//         email: req.body.email,
-//         nombreEmpresa: req.body.nombreEmpresa,
-//         cuit: req.body.cuit,
-//         nombreSede: req.body.nombreSede,
-//         ciudad: req.body.ciudad,
-//         direccion: req.body.direccion,
-//         telefono: req.body.telefono,
-//         emails: req.body.emails,
-//         accesUser: req.body.accessUser,
-//         password: CryptoJS.AES.encrypt(
-//           req.body.password,
-//           process.env.PASS_SEC
-//         ).toString(),
-//       },
-//     });
-
-//     if (created) {
-//       res.status(201).json({ message: "Establecimiento/Obra creado", created });
-//     } else {
-//       res.status(200).json({ warning: "El Establecimiento/Obra ya existe", user });
-//     }
-//   } catch (error) {
-//     res.status(500).send(`Error: ${error}`);
-//   }
-// }
 
 async function createUserController(req, res) {
   const {
@@ -206,7 +177,7 @@ async function createUserController(req, res) {
   }
 
   try {
-    const branchName = `${nombreSede} - Establecimiento/Obra: ${ciudad} - ${direccion}`;
+    const branchName = `${nombreSede} - ${ciudad} - ${direccion}`;
     const [newUser, created] = await User.findOrCreate({
       where: {
         nombreSede: branchName,
@@ -239,7 +210,7 @@ async function createUserController(req, res) {
       nombreEmpresa: userCompany,
       email: email,
       decryptedPassword: userPassword,
-      nombreSede: nombreSede,
+      nombreSede: req.body.nombreSede,
       ciudad: ciudad,
       direccion: direccion,
     };
@@ -575,6 +546,154 @@ async function sendResetPasswordEmail(email, resetLink) {
   });
 }
 
+async function sendchangePasswordUsercontroller(req, res) {
+  const { emailJefe } = req.body; 
+
+  try {
+    // Buscar al usuario por su correo electrónico
+    const user = await User.findOne({ where: { emailJefe: emailJefe } });
+    
+    const email = user.email
+
+    if (!user) {
+      return res.status(404).send("Usuario no encontrado");
+    }
+    
+    // if (!emailBoss) {
+    //   return res.status(404).send("Usuario sin permiso");
+    // }
+
+    // Generar un token de restablecimiento de contraseña
+    const resetToken = jwt.sign({ email: email }, process.env.JWT_SEC, {
+      expiresIn: "1h", // El token expira en 1 hora
+    });
+
+    // Determinar la URL base según el entorno
+    const baseUrl =
+      process.env.NODE_ENV === "production"
+        ? process.env.DEVELOPMENT_BASE_URL
+        : process.env.PRODUCTION_URL;
+
+    // Construir el enlace de restablecimiento de contraseña
+    const resetLink = `${baseUrl}/changePasswordUser?token=${resetToken}`;
+
+    // Enviar el enlace por correo electrónico
+    await sendChangePasswordEmail(emailJefe, resetLink);
+
+    return res
+      .status(200)
+      .send(
+        "Se ha enviado un enlace para cambiar la contraseña por correo electrónico"
+      );
+  } catch (error) {
+    return res.status(500).send(`Error: ${error.message}`);
+  }
+}
+
+async function sendChangePasswordEmail(email, resetLink) {
+  const mailOptions = {
+    from: `Protección Laboral ${process.env.EMAIL_USER}`,
+    to: email,
+    subject: "Cambiar de contraseña",
+    html: `
+      <p>Haz clic en el siguiente enlace para cambiar su contraseña:</p>
+      <div style="text-align: center;">
+            <a href="${resetLink}" style="text-decoration: none;
+            display: inline-block;
+            color: #ffffff;
+            background-color: #6b67f5;
+            border-radius: 4px;
+            width: auto;
+            border-top: 0px solid #8a3b8f;
+            border-right: 0px solid #8a3b8f;
+            border-bottom: 0px solid #8a3b8f;
+            border-left: 0px solid #8a3b8f;
+            padding-top: 5px;
+            padding-bottom: 5px;
+            font-family: Arial,Helvetica Neue,Helvetica,sans-serif;
+            font-size: 16px;
+            text-align: center;
+            word-break: keep-all">
+          <span style="padding-left: 20px;
+          padding-right: 20px;
+          font-size: 16px;
+          display: inline-block;
+          letter-spacing: normal;">
+          <span style="word-break: break-word;
+          line-height: 32px;">Restablecer contraseña
+          </span>
+          </span>
+            </a>
+            </div>
+        <p>O ingresar al siguiente link:</p>
+        <p><a href="${resetLink}">${resetLink}</a></p>
+    `,
+  };
+
+  transporter.sendMail(mailOptions, (error, info) => {
+    if (error) {
+      console.error("Error al enviar el correo:", error);
+    } else {
+      console.log("Correo enviado:", info.response);
+    }
+  });
+}
+
+async function changeUserPasswordController(req, res) {
+  const { oldPassword, newPassword } = req.body;
+  const token = req.params.token; // Obtener el token desde la consulta
+
+  if (!token) {
+    return res
+      .status(400)
+      .send("Token de restablecimiento de contraseña no proporcionado");
+  }
+
+  try {
+    // Verificar y decodificar el token de restablecimiento de contraseña
+    const decodedToken = jwt.verify(token, process.env.JWT_SEC);
+    // Extraer el correo electrónico del token
+    const { email, exp } = decodedToken;
+
+    // Verificar si el token ha caducado
+    const currentTimestamp = Math.floor(Date.now() / 1000); // Obtener la marca de tiempo actual en segundos
+    if (exp < currentTimestamp) {
+      return res.status(401).send("El token de restablecimiento de contraseña ha caducado");
+    }
+
+    // Buscar al usuario por su correo electrónico
+    const user = await User.findOne({ where: { email } });
+
+    if (!user) {
+      return res.status(404).send("Usuario no encontrado");
+    }
+ // Decrypt and check if the old password matches
+ const decryptedPassword = CryptoJS.AES.decrypt(
+  user.password,
+  process.env.PASS_SEC
+).toString(CryptoJS.enc.Utf8);
+
+if (decryptedPassword !== oldPassword) {
+  return res.status(401).json({ error: "Contraseña anterior incorrecta" });
+}
+
+// Encrypt and update the new password
+const encryptedNewPassword = CryptoJS.AES.encrypt(
+  newPassword,
+  process.env.PASS_SEC
+).toString();
+
+await User.update({ password: encryptedNewPassword }, { where: { email } });
+
+    return res.status(200).send("Se cambio la contraseña exitosamente");
+  } catch (error) {
+    if (error.name === "TokenExpiredError") {
+      return res.status(401).send("El token de cambio de contraseña ha caducado");
+    }
+    return res.status(500).send(`Error: ${error.message}`);
+  }
+}
+
 const getFilesByEmail = async (req, res) => {
   const {email} = req.params
   try {
@@ -647,5 +766,7 @@ module.exports = {
   forgotPasswordController,
   resetPasswordController,
   getFilesByEmail,
-  getEmailsByEmail
+  getEmailsByEmail,
+  sendchangePasswordUsercontroller,
+  changeUserPasswordController
 };

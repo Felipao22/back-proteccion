@@ -6,8 +6,6 @@ module.exports = function generateEmailTemplate(emailData) {
     email,
     decryptedPassword,
     nombreSede,
-    ciudad,
-    direccion,
   } = emailData;
 
   return `
@@ -201,7 +199,7 @@ module.exports = function generateEmailTemplate(emailData) {
     <table border="0" cellpadding="10" cellspacing="0" class="heading_block block-2" role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt;" width="100%">
     <tr>
     <td class="pad">
-    <h1 style="margin: 0; color: #2b2d2d; direction: ltr; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 43px; font-weight: normal; letter-spacing: normal; line-height: 120%; text-align: left; margin-top: 0; margin-bottom: 0;"><strong>Bienvenido a Protección Laboral, ${nombreEmpresa}!</strong></h1>
+    <h1 style="margin: 0; color: #2b2d2d; direction: ltr; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 43px; font-weight: normal; letter-spacing: normal; line-height: 120%; text-align: left; margin-top: 0; margin-bottom: 0;"><strong>¡Bienvenido a PRO, ${nombreEmpresa} - ${nombreSede}!</strong></h1>
     </td>
     </tr>
     </table>
@@ -209,11 +207,16 @@ module.exports = function generateEmailTemplate(emailData) {
     <tr>
     <td class="pad">
     <div style="font-family: sans-serif">
+    <div class="" style="font-size: 22px; font-family: Arial, Helvetica Neue, Helvetica, sans-serif; mso-line-height-alt: 21px; line-height: 1.5;">
+    <strong style="margin: 0; mso-line-height-alt: 21px; font-weight: normal">La plataforma virtual de PROTECCIÓN LABORAL.</strong>
+    </div>
+    </div>
+    <div style="font-family: sans-serif">
     <div class="" style="font-size: 20px; font-family: Arial, Helvetica Neue, Helvetica, sans-serif; mso-line-height-alt: 21px; color: #6f7077; line-height: 1.5;">
-    <p style="margin: 0; mso-line-height-alt: 21px;">Estamos muy contentos de que formes parte de nuestra empresa. </p>
-    <p style="margin: 0; mso-line-height-alt: 21px;">Se ha agredado el siguiente establecimiento/obra: ${nombreSede} a su empresa. </p>
-    <p style="margin: 0; mso-line-height-alt: 21px;">Localizado en ${ciudad}. </p>
-    <p style="margin: 0; mso-line-height-alt: 21px;">Con dirección en ${direccion}. </p>
+    <p style="margin: 0; mso-line-height-alt: 21px;">Nos alegra que pertenezcas a nuestra comunidad de clientes premium, un servicio ágil, personalizado y de excelencia.</p>
+    <p style="margin: 0; mso-line-height-alt: 21px;">A través de la plataforma PRO podrás acceder a toda la documentación y registros de actividades realizadas por nuestra consultora en materia de Higiene y Seguridad, cuando lo necesites y de manera inmediata.</p>
+    <p style="margin: 0; mso-line-height-alt: 21px;">Para acceder a PRO deberás ingresar iniciando sesión a través de la página web:</p>
+    <a href="https://proteccionlaboral.com.ar/" target="_blank" >www.proteccionlaboral.com.ar</a>
     </div>
     </div>
     </td>
