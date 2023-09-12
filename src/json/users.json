@@ -14,7 +14,7 @@
       "password": "U2FsdGVkX1/jH9DGdvV1M1r3Gyq1HDGUEqrWsJxinrI=",
       "deleted": false,
       "isAdmin": true,
-      "isSuperAdmin": false
+      "isSuperAdmin": true
     },
     {
       "userId": 3,

@@ -3,3 +3,7 @@
  /src/app.js
  /src/json/users.json
 
+ # Ignorar la carpeta de pruebas
+/tests/
+
+
