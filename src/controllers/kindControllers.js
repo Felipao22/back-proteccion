@@ -90,15 +90,16 @@ async function getKindController(req, res) {
   const { name } = req.query;
   
   try {
-      let kind;
+      let kinds;
 
       if (name) {
-          kind = await getKindByName(name);
+          kinds = await getKindByName(name);
       } else {
-          kind = await getAllKinds();
+          kinds = await getAllKinds();
+          kinds.sort((a, b) => a.name.localeCompare(b.name));
       }
 
-      res.send(kind);
+      res.send(kinds);
   } catch (error) {
       res.status(500).send(error.message); // Accedemos al mensaje del error
   }

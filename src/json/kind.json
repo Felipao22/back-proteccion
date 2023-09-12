@@ -1,79 +1,117 @@
 {
-    "tipos":
-    [{
+    "tipos": [
+      {
         "id": "1",
-        "name": "Iluminación",
-        "categoryId":[1]
-    },
-    {
+        "name": "Iluminación"
+      },
+      {
         "id": "2",
-        "name": "Carga de Fuego",
-        "categoryId":[1]
-    },
-    {
+        "name": "Carga de Fuego"
+      },
+      {
         "id": "3",
-        "name": "Ruido",
-        "categoryId":[1]
-    },
-    {
+        "name": "Ruido"
+      },
+      {
         "id": "4",
-        "name": "Ergonomía",
-        "categoryId":[1]
-    },
-    {
+        "name": "Ergonomía"
+      },
+      {
         "id": "5",
-        "name": "Puesta a tierra",
-        "categoryId":[1]
-    },
-    {
+        "name": "Puesta a tierra"
+      },
+      {
         "id": "6",
-        "name": "Matafuegos",
-        "categoryId":[2]
-    },
-    {
+        "name": "Matafuegos"
+      },
+      {
         "id": "7",
-        "name": "Luces de emergencia",
-        "categoryId":[2]
-    },
-    {
+        "name": "Luces de emergencia"
+      },
+      {
         "id": "8",
-        "name": "Carteleria",
-        "categoryId":[2]
-    },
-    {
+        "name": "Carteleria"
+      },
+      {
         "id": "9",
-        "name": "Tableros eléctricos",
-        "categoryId":[2]
-    },
-    {
+        "name": "Tableros eléctricos"
+      },
+      {
         "id": "10",
-        "name": "Botiquines",
-        "categoryId":[2]
-    },
-    {
+        "name": "Botiquines"
+      },
+      {
         "id": "11",
-        "name": "Reportes de incidencia",
-        "categoryId":[2]
-    },
-    {
+        "name": "Reportes de incidencia"
+      },
+      {
         "id": "12",
-        "name": "Constancia de visita",
-        "categoryId":[2]
-    },
-    {
+        "name": "Constancia de visita"
+      },
+      {
         "id": "13",
-        "name": "Capacitación",
-        "categoryId":[3]
-    },
-    {
+        "name": "Capacitación"
+      },
+      {
         "id": "14",
-        "name": "Cronogroma del servicio",
-        "categoryId":[3]
-    },
-    {
+        "name": "Cronograma del servicio"
+      },
+      {
         "id": "15",
-        "name": "Plan Anual de Capacitaciones",
-        "categoryId":[3]
-    }
-]
-}
+        "name": "Plan Anual de Capacitaciones"
+      },
+      {
+        "id": "16",
+        "name": "Control de Infraestructura"
+      },
+      {
+        "id": "17",
+        "name": "Control de Uso de EPP"
+      },
+      {
+        "id": "18",
+        "name": "Control de Máquinas y Herramientas"
+      },
+      {
+        "id": "19",
+        "name": "Control de Vehículos"
+      },
+      {
+        "id": "20",
+        "name": "Control de Legajo Técnico"
+      },
+      {
+        "id": "21",
+        "name": "Programa de Seguridad de Obra"
+      },
+      {
+        "id": "22",
+        "name": "Avisos de Inicio de Obra"
+      },
+      {
+        "id": "23",
+        "name": "Evaluación de Riesgos"
+      },
+      {
+        "id": "24",
+        "name": "Informe para Habilitación Municipal"
+      },
+      {
+        "id": "25",
+        "name": "Procedimientos de Trabajo"
+      },
+      {
+        "id": "26",
+        "name": "R.G.R.L."
+      },
+      {
+        "id": "27",
+        "name": "R.A.R."
+      },
+      {
+        "id": "28",
+        "name": "Otros"
+      }
+    ]
+  }
+  

@@ -20,7 +20,6 @@
 const server = require('./src/app.js');
 const { conn } = require('./src/db.js');
 const {apiCity} = require('./src/controllers/cityControllers')
-const {apiCategory} = require('./src/controllers/categoryControllers.js')
 const {apiKind} = require('./src/controllers/kindControllers.js');
 const { apiUsers } = require('./src/controllers/userControllers.js');
 
@@ -30,7 +29,6 @@ const PORT = 3001 ?? process.env.PORT;
 conn.sync({ force: false }).then(() => {
   server.listen(PORT, async () => {
     await apiCity();
-    await apiCategory();
     await apiKind();
     await apiUsers();
     console.log(`Server is listening on port ${PORT}`); // eslint-disable-line no-console
