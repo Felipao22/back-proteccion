@@ -177,10 +177,9 @@ async function createUserController(req, res) {
   }
 
   try {
-    const branchName = `${nombreSede} - ${ciudad} - ${direccion}`;
     const [newUser, created] = await User.findOrCreate({
       where: {
-        nombreSede: branchName,
+        nombreSede: nombreSede,
         ciudad: ciudad,
         direccion: direccion,
         telefono: telefono,
