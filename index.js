@@ -26,7 +26,7 @@ const { apiUsers } = require('./src/controllers/userControllers.js');
 const PORT = 3001 ?? process.env.PORT;
 
 // Syncing all the models at once.
-conn.sync({ force: false }).then(() => {
+conn.sync({ force: true }).then(() => {
   server.listen(PORT, async () => {
     await apiCity();
     await apiKind();

@@ -244,10 +244,12 @@ async function createUserController(req, res) {
 
 async function createEmployeeController(req, res) {
   try {
-    const { email, password } = req.body;
+    const { email, password, name, lastName } = req.body;
     const [user, created] = await User.findOrCreate({
       where: {
         email: email,
+        name: name,
+        lastName: lastName,
         isAdmin: true,
         nombreEmpresa: null,
         cuit: null,

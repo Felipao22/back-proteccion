@@ -11,12 +11,16 @@ module.exports = (sequelize) => {
     },
     email: {
       type: DataTypes.STRING,
-
       primaryKey: true,
+    },
+    name: {
+      type: DataTypes.STRING,
+    },
+    lastName: {
+      type: DataTypes.STRING,
     },
     password: {
       type: DataTypes.STRING,
-
     },
     nombreEmpresa: {
       type: DataTypes.STRING,
@@ -26,19 +30,15 @@ module.exports = (sequelize) => {
     },
     nombreSede: {
       type: DataTypes.STRING,
-
     },
     ciudad: {
       type: DataTypes.STRING,
-
     },
     direccion: {
       type: DataTypes.STRING,
-
     },
     telefono: {
       type: DataTypes.STRING,
-
     },
     emails: {
       type: DataTypes.ARRAY(DataTypes.STRING),

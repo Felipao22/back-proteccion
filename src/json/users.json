@@ -6,7 +6,9 @@
       "password": "U2FsdGVkX1+D+SJSNTWh+KDZMBvZvnbGgqEwTNkWWwI=",
       "deleted": false,
       "isAdmin": true,
-      "isSuperAdmin": true
+      "isSuperAdmin": true,
+      "name": "Cristian",
+      "lastName": "Montenegro"
     },
     {
       "userId": 2,
@@ -14,7 +16,9 @@
       "password": "U2FsdGVkX1/jH9DGdvV1M1r3Gyq1HDGUEqrWsJxinrI=",
       "deleted": false,
       "isAdmin": true,
-      "isSuperAdmin": true
+      "isSuperAdmin": true,
+      "name": "Daniela",
+      "lastName":"Luna"
     },
     {
       "userId": 3,
@@ -22,7 +26,9 @@
       "password": "U2FsdGVkX18qlxKBa+NK7bpPP7iM7wQ1+hILey6jSzI=",
       "deleted": false,
       "isAdmin": true,
-      "isSuperAdmin": false
+      "isSuperAdmin": false,
+      "name": "Lucas",
+      "lastName":"Caballero"
     },
     {
       "userId": 4,
