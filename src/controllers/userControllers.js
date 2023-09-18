@@ -288,7 +288,7 @@ async function loginController(req, res) {
       const token = generateJWTToken(userAdmin.userId);
 
       return res.status(200).json({
-        message: "Administrador logeado correctamente",
+        message: "Administrador has iniciado sesión con éxito. ¡Bienvenido de nuevo!",
         user: userAdmin,
         token,
       });
@@ -319,7 +319,7 @@ async function loginController(req, res) {
     const token = generateJWTToken(userLogin.userId);
 
     return res.status(200).json({
-      message: "Usuario logeado correctamente",
+      message: "Has iniciado sesión con éxito. ¡Bienvenido de nuevo!",
       user: userLogin,
       token,
     });
@@ -341,7 +341,7 @@ async function logoutController(req, res) {
   try {
     return res
       .status(200)
-      .json({ message: "Usuario deslogueado correctamente" });
+      .json({ message: "Has cerrado sesión con éxito. ¡Hasta la próxima vez!" });
   } catch (error) {
     return res
       .status(500)
