@@ -177,8 +177,18 @@ async function createUserController(req, res) {
   }
 
   try {
-    const [newUser, created] = await User.findOrCreate({
-      where: {
+
+    const existingUser = await User.findOne({
+      where: { email: email }
+    });
+
+    if (existingUser) {
+      return res
+        .status(409)
+        .json({ warning: "El usuario ya existe." });
+    }
+
+    const newUser = await User.create({
         nombreSede: nombreSede,
         ciudad: ciudad,
         direccion: direccion,
@@ -193,14 +203,8 @@ async function createUserController(req, res) {
         nombreEmpresa: nombreEmpresa,
         cuit: cuit,
         emailJefe: emailJefe
-      },
     });
 
-    if (!created) {
-      return res
-        .status(409)
-        .json({ warning: "Establecimiento/Obra ya existente." });
-    }
 
     const userCompany = nombreEmpresa;
     const userPassword = password;
