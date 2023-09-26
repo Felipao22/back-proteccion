@@ -64,10 +64,11 @@ async function updateUserByEmailController(req, res) {
     } else {
       res.status(404).send("Usuario no encontrado");
     }
-  } catch (e) {
-    res.status(500).send(`Error: ${e.message}`);
+  } catch (error) {
+    return res.status(500).send(`Error: ${error.message}`);
   }
 }
+
 
 async function updateUserByEmail(email, modification) {
   try {
@@ -75,10 +76,12 @@ async function updateUserByEmail(email, modification) {
       where: { email: email },
     });
     return numUpdatedRows === 1;
-  } catch (e) {
+  } catch (error) {
+    console.log(`Error: ${error}`);
     return false;
   }
 }
+
 
 async function banUserController(req, res) {
   const { email } = req.params;
@@ -391,6 +394,31 @@ async function changePasswordController(req, res) {
 
     if (decryptedPassword !== oldPassword) {
       return res.status(401).json({ error: "Contraseña anterior incorrecta" });
+    }
+
+    // Encrypt and update the new password
+    const encryptedNewPassword = CryptoJS.AES.encrypt(
+      newPassword,
+      process.env.PASS_SEC
+    ).toString();
+
+    await User.update({ password: encryptedNewPassword }, { where: { email } });
+
+    return res.status(200).send("Contraseña actualizada exitosamente");
+  } catch (error) {
+    return res.status(500).send(`Error: ${error.message}`);
+  }
+}
+
+async function changePasswordForAllsController(req, res) {
+  const { email } = req.params;
+  const { newPassword } = req.body;
+
+  try {
+    const user = await User.findOne({ where: { email } });
+
+    if (!user) {
+      return res.status(404).send("Usuario no encontrado");
     }
 
     // Encrypt and update the new password
@@ -778,4 +806,5 @@ module.exports = {
   getEmailsByEmail,
   sendchangePasswordUsercontroller,
   changeUserPasswordController,
+  changePasswordForAllsController
 };
