@@ -222,19 +222,18 @@ async function createUserController(req, res) {
       html: emailHtml,
     };
 
-    transporter.sendMail(mailOptions, (error, info) => {
-      if (error) {
-        console.error("Error al enviar el correo:", error);
-      } else {
-        console.log("Correo enviado:", info.response);
-      }
-    });
+    try {
+      await transporter.sendMail(mailOptions);
+      console.log("Correo enviado con éxito");
+    } catch (error) {
+      console.error("Error al enviar el correo:", error);
+    }
 
     res.status(201).json({ message: "Establecimiento/Obra agregada", newUser });
   } catch (error) {
     return res
       .status(500)
-      .json(`Ocurrió un error al agregar el Establecimiento/Obra: ${error}`);
+      .json({ warning: `Ocurrió un error al agregar el Establecimiento/Obra: ${error.message}` });
   }
 }
 
