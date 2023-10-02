@@ -50,7 +50,7 @@ async function uploadFile(req, res) {
           userEmail,
         });
         return res.json({
-          message: "Archivo subido correctamente",
+          message: "Archivo subido correctamente y correo enviado",
           file: newFile,
         });
       }
@@ -131,7 +131,7 @@ async function uploadFile(req, res) {
           });
         }
         return res.json({
-          message: "Archivo subido correctamente",
+          message: "Archivo subido correctamente y correo enviado",
           file: newFile,
         });
       } catch (err) {

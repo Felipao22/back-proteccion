@@ -222,14 +222,15 @@ async function createUserController(req, res) {
       html: emailHtml,
     };
 
-    try {
-      await transporter.sendMail(mailOptions);
-      console.log("Correo enviado con éxito");
-    } catch (error) {
-      console.error("Error al enviar el correo:", error);
-    }
+    transporter.sendMail(mailOptions, (error, info) => {
+      if (error) {
+        console.error("Error al enviar el correo:", error);
+      } else {
+        console.log("Correo enviado:", info.response);
+      }
+    });
 
-    res.status(201).json({ message: "Establecimiento/Obra agregada", newUser });
+    res.status(201).json({ message: "Establecimiento/Obra agregada y correo enviado", newUser });
   } catch (error) {
     return res
       .status(500)
