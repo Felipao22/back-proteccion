@@ -24,7 +24,7 @@ const isAuth = (req, res, next) => {
 		const token = authHeader.split(' ')[1];
 		decodedToken = verify(token, process.env.JWT_SEC);
 	} catch (error) {
-		const statusError = new StatusError('Unauthorized action', 401);
+		const statusError = new StatusError('El token ha expirado, iniciar sesión nuevamente', 401);
 		return next(statusError);
 	}
 
