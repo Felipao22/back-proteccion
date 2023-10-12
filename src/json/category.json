@@ -1,0 +1,20 @@
+{
+    "categorías":
+    [{
+        "id": "5",
+        "name": "Higiene y Seguridad"
+    },
+    {
+        "id": "6",
+        "name": "Medicina Laboral"
+    },
+    {
+        "id": "7",
+        "name": "Medio Ambiente"
+    },
+    {
+        "id": "8",
+        "name": "Recursos Humanos"
+    }
+]
+}

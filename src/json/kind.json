@@ -1,117 +1,159 @@
 {
-    "tipos": [
+  "tipos": [
       {
-        "id": "1",
-        "name": "Iluminación"
+          "id": "1",
+          "name": "Iluminación",
+          "categoryId": [5]
       },
       {
-        "id": "2",
-        "name": "Carga de Fuego"
+          "id": "2",
+          "name": "Carga de Fuego",
+          "categoryId": [5]
       },
       {
-        "id": "3",
-        "name": "Ruido"
+          "id": "3",
+          "name": "Ruido",
+          "categoryId": [5]
       },
       {
-        "id": "4",
-        "name": "Ergonomía"
+          "id": "4",
+          "name": "Ergonomía",
+          "categoryId": [5]
       },
       {
-        "id": "5",
-        "name": "Puesta a tierra"
+          "id": "5",
+          "name": "Puesta a tierra",
+          "categoryId": [5]
       },
       {
-        "id": "6",
-        "name": "Matafuegos"
+          "id": "6",
+          "name": "Matafuegos",
+          "categoryId": [5]
       },
       {
-        "id": "7",
-        "name": "Luces de emergencia"
+          "id": "7",
+          "name": "Luces de emergencia",
+          "categoryId": [5]
       },
       {
-        "id": "8",
-        "name": "Carteleria"
+          "id": "8",
+          "name": "Carteleria",
+          "categoryId": [5]
       },
       {
-        "id": "9",
-        "name": "Tableros eléctricos"
+          "id": "9",
+          "name": "Tableros eléctricos",
+          "categoryId": [5]
       },
       {
-        "id": "10",
-        "name": "Botiquines"
+          "id": "10",
+          "name": "Botiquines",
+          "categoryId": [5]
       },
       {
-        "id": "11",
-        "name": "Reportes de incidencia"
+          "id": "11",
+          "name": "Reportes de incidencia",
+          "categoryId": [5]
       },
       {
-        "id": "12",
-        "name": "Constancia de visita"
+          "id": "12",
+          "name": "Constancia de visita",
+          "categoryId": [5]
       },
       {
-        "id": "13",
-        "name": "Capacitación"
+          "id": "13",
+          "name": "Capacitación",
+          "categoryId": [5]
       },
       {
-        "id": "14",
-        "name": "Cronograma del servicio"
+          "id": "14",
+          "name": "Cronograma del servicio",
+          "categoryId": [5]
       },
       {
-        "id": "15",
-        "name": "Plan Anual de Capacitaciones"
+          "id": "15",
+          "name": "Plan Anual de Capacitaciones",
+          "categoryId": [5]
       },
       {
-        "id": "16",
-        "name": "Control de Infraestructura"
+          "id": "16",
+          "name": "Control de Infraestructura",
+          "categoryId": [5]
       },
       {
-        "id": "17",
-        "name": "Control de Uso de EPP"
+          "id": "17",
+          "name": "Control de Uso de EPP",
+          "categoryId": [5]
       },
       {
-        "id": "18",
-        "name": "Control de Máquinas y Herramientas"
+          "id": "18",
+          "name": "Control de Máquinas y Herramientas",
+          "categoryId": [5]
       },
       {
-        "id": "19",
-        "name": "Control de Vehículos"
+          "id": "19",
+          "name": "Control de Vehículos",
+          "categoryId": [5]
       },
       {
-        "id": "20",
-        "name": "Control de Legajo Técnico"
+          "id": "20",
+          "name": "Control de Legajo Técnico",
+          "categoryId": [5]
       },
       {
-        "id": "21",
-        "name": "Programa de Seguridad de Obra"
+          "id": "21",
+          "name": "Programa de Seguridad de Obra",
+          "categoryId": [5]
       },
       {
-        "id": "22",
-        "name": "Avisos de Inicio de Obra"
+          "id": "22",
+          "name": "Avisos de Inicio de Obra",
+          "categoryId": [5]
       },
       {
-        "id": "23",
-        "name": "Evaluación de Riesgos"
+          "id": "23",
+          "name": "Evaluación de Riesgos",
+          "categoryId": [5]
       },
       {
-        "id": "24",
-        "name": "Informe para Habilitación Municipal"
+          "id": "24",
+          "name": "Informe para Habilitación Municipal",
+          "categoryId": [5]
       },
       {
-        "id": "25",
-        "name": "Procedimientos de Trabajo"
+          "id": "25",
+          "name": "Procedimientos de Trabajo",
+          "categoryId": [5]
       },
       {
-        "id": "26",
-        "name": "R.G.R.L."
+          "id": "26",
+          "name": "R.G.R.L.",
+          "categoryId": [5]
       },
       {
-        "id": "27",
-        "name": "R.A.R."
+          "id": "27",
+          "name": "R.A.R.",
+          "categoryId": [5]
       },
       {
-        "id": "28",
-        "name": "Otros"
-      }
-    ]
+          "id": "28",
+          "name": "Otros",
+          "categoryId": [5]
+      },
+      {
+        "id": "29",
+        "name": "Medicina Laboral",
+        "categoryId": [6]
+    },
+    {
+        "id": "30",
+        "name": "Medio Ambiente",
+        "categoryId": [7]
+    },
+    {
+      "id": "31",
+      "name": "Recursos Humanos",
+      "categoryId": [8]
   }
-  
+  ]
+}

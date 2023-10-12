@@ -148,6 +148,7 @@ async function uploadFile(req, res) {
   }
 }
 
+
 //Fucion del GET Files, redirecciona segun haya query name o no
 function getFiles(name) {
   if (name) {

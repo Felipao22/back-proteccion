@@ -6,8 +6,6 @@ const { Op } = require("sequelize");
 const addKind = async (req, res) => {
   const { name } = req.body;
 
-  console.log(name);
-
   try {
     if (!name) {
       return res
