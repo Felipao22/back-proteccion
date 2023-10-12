@@ -235,6 +235,32 @@ async function deleteFileById(req, res) {
   }
 }
 
+async function deleteAllFiles(req, res) {
+  try {
+    const files = await File.findAll();
+
+    if (!files || files.length === 0) {
+      return res.status(404).json({ message: "No hay archivos para eliminar" });
+    }
+
+    files.forEach(async (file) => {
+      const filePath = getFilePath(file.data);
+      try {
+        fs.unlinkSync(filePath);
+        await file.destroy();
+      } catch (error) {
+        console.error('Error al eliminar el archivo:', filePath, error);
+      }
+    });
+
+    return res.status(200).json({ message: "Todos los archivos fueron eliminados correctamente" });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: "Error al eliminar los archivos" });
+  }
+}
+
+
 module.exports = {
   getFiles,
   uploadFile,
@@ -242,4 +268,5 @@ module.exports = {
   getAllFiles,
   getFilesByName,
   downloadFile,
+  deleteAllFiles
 };

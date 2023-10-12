@@ -3,12 +3,13 @@ const { Router } = require ("express");
 const router = Router();
 
 const upload = require('../config/upload.config');
-const {uploadFile, getFiles, downloadFile, deleteFileById } = require('../controllers/fileControllers')
+const {uploadFile, getFiles, downloadFile, deleteFileById, deleteAllFiles } = require('../controllers/fileControllers');
+const { isAuth } = require("../controllers/authControllers");
 
 
 //POST Files
 // http://localhost:3001/file
-router.post('/', upload.single('file'), uploadFile)
+router.post('/', upload.single('file'), isAuth, uploadFile)
 
 
 
@@ -25,9 +26,11 @@ router.get('/', async (req, res) => {
 });
 
 
-router.get('/:id', downloadFile);
+router.get('/:id', isAuth, downloadFile);
 
-router.delete('/:id', deleteFileById)
+router.delete('/:id', isAuth, deleteFileById)
+
+router.delete('/', isAuth, deleteAllFiles)
 
 
 module.exports = router;
