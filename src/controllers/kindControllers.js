@@ -1,20 +1,28 @@
-const { Kind } = require("../db");
+const { Kind, Category } = require("../db");
 const jsonKinds = require("../json/kind.json");
 const kinds = jsonKinds.tipos;
 const { Op } = require("sequelize");
 
 const addKind = async (req, res) => {
-  const { name } = req.body;
+  const { name, categoryId } = req.body;
 
   try {
-    if (!name) {
-      return res
-        .status(400)
-        .json({ error: "Debe proporcionar un nombre para el tipo de archivo" });
+    if (!name || !categoryId) {
+      return res.status(400).json({
+        error:
+          "Debe proporcionar un nombre y categoría para el tipo de archivo",
+      });
+    }
+
+    const category = await Category.findByPk(categoryId);
+
+    if (!category) {
+      return res.status(400).json({ error: "Categoría no encontrada" });
     }
 
     const [newKind, created] = await Kind.findOrCreate({
       where: { name },
+      defaults: { categoryId: category.id },
     });
 
     if (!created) {
@@ -56,15 +64,16 @@ async function getKindByIdController(req, res) {
   try {
     const kind = await getKindById(id);
 
-    if (typeof kind === "object") {
+    if (kind) {
       res.json(kind);
     } else {
-      res.status(404).json(kind);
+      res.status(404).json({ error: "Tipo de archivo no encontrado" });
     }
   } catch (error) {
-    res.status(500).send(error.message); // Accedemos al mensaje del error
+    res.status(500).send(error.message);
   }
 }
+
 
 async function getKindById(id) {
   try {
