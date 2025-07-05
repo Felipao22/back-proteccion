@@ -16,16 +16,39 @@ async function getUsersController(req, res) {
   }
 }
 
+// async function getUsers() {
+//   try {
+//     const foundUsers = await User.findAll({
+//       include: [{ model: File }],
+//     });
+//     return foundUsers;
+//   } catch (e) {
+//     return `No se encontraron usuarios cargados en la base de datos, ${e.message}`;
+//   }
+// }
+
 async function getUsers() {
   try {
     const foundUsers = await User.findAll({
       include: [{ model: File }],
     });
-    return foundUsers;
+
+    // Desencriptar las contraseñas de cada usuario
+    const usersWithDecryptedPasswords = foundUsers.map(user => {
+      const decryptedPassword = CryptoJS.AES.decrypt(user.password, process.env.PASS_SEC).toString(CryptoJS.enc.Utf8);
+      return {
+        ...user.toJSON(), // Convertir el objeto Sequelize a un objeto simple
+        password: decryptedPassword, // Sobrescribir el campo password con la versión desencriptada
+      };
+    });
+
+    return usersWithDecryptedPasswords;
+
   } catch (e) {
     return `No se encontraron usuarios cargados en la base de datos, ${e.message}`;
   }
 }
+
 
 async function getUserByEmailController(req, res) {
   const { email } = req.params;

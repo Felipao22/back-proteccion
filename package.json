@@ -32,7 +32,8 @@
     "sequelize": "^6.3.5",
     "swagger-ui-dist": "^4.15.5",
     "swagger-ui-express": "^4.6.0",
-    "uniqid": "^5.4.0"
+    "uniqid": "^5.4.0",
+    "xlsx": "^0.18.5"
   },
   "devDependencies": {
     "chai": "^4.2.0",
