@@ -26,6 +26,7 @@ const generateVisitExcel = async (req, res) => {
       inspeccion,
       relevamiento,
       capacitacion,
+      notas,
     } = req.body;
 
     if (!empresa || !direccion || !localidad || !cuit || !fechaVisita) {
@@ -65,6 +66,12 @@ const generateVisitExcel = async (req, res) => {
     worksheet.getCell("L19").value = inspeccion ? "✓" : "";
     worksheet.getCell("L20").value = relevamiento ? "✓" : "";
     worksheet.getCell("L21").value = capacitacion ? "✓" : "";
+    worksheet.getCell("A33").value = notas || "";
+    worksheet.getCell("A33").alignment = {
+      vertical: "top",
+      horizontal: "left",
+      wrapText: true,
+    };
 
     // Generar nombre único
     const date = new Date();
