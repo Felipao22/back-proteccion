@@ -14,6 +14,18 @@ const generateVisitExcel = async (req, res) => {
       fechaVisita,
       observaciones,
       provincia,
+      botiquines,
+      extintores,
+      luces,
+      maquinas,
+      tableros,
+      epp,
+      vehiculos,
+      arneses,
+      escaleras,
+      inspeccion,
+      relevamiento,
+      capacitacion,
     } = req.body;
 
     if (!empresa || !direccion || !localidad || !cuit || !fechaVisita) {
@@ -41,6 +53,18 @@ const generateVisitExcel = async (req, res) => {
     worksheet.getCell("I9").value = fechaVisita;
     // worksheet.getCell('A9').value = observaciones || '';
     worksheet.getCell("A11").value = provincia;
+    worksheet.getCell("F17").value = botiquines ? "✓" : "";
+    worksheet.getCell("F18").value = extintores ? "✓" : "";
+    worksheet.getCell("F19").value = luces ? "✓" : "";
+    worksheet.getCell("F20").value = maquinas ? "✓" : "";
+    worksheet.getCell("F21").value = tableros ? "✓" : "";
+    worksheet.getCell("F22").value = epp ? "✓" : "";
+    worksheet.getCell("F23").value = vehiculos ? "✓" : "";
+    worksheet.getCell("L17").value = arneses ? "✓" : "";
+    worksheet.getCell("L18").value = escaleras ? "✓" : "";
+    worksheet.getCell("L19").value = inspeccion ? "✓" : "";
+    worksheet.getCell("L20").value = relevamiento ? "✓" : "";
+    worksheet.getCell("L21").value = capacitacion ? "✓" : "";
 
     // Generar nombre único
     const date = new Date();
