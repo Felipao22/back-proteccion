@@ -69,7 +69,7 @@ async function uploadFile(req, res) {
           kindId,
           userEmail,
         });
-        
+
         const user = await User.findOne({
           where: { email: userEmail },
         });
@@ -148,7 +148,6 @@ async function uploadFile(req, res) {
   }
 }
 
-
 //Fucion del GET Files, redirecciona segun haya query name o no
 function getFiles(name) {
   if (name) {
@@ -161,11 +160,12 @@ function getFiles(name) {
 //Funcion interna, es llamada por getFiles cuando no viene query name
 async function getAllFiles() {
   try {
-    const foundFilesComplete = await File.findAll({});
-    // const filtrado = foundFilesComplete.filter(e => (e.active))
+    const foundFilesComplete = await File.findAll({
+      order: [["createdAt", "DESC"]],
+    });
     return foundFilesComplete;
   } catch (error) {
-    console.log(error); //res.send(error.message);
+    console.error(error);
   }
 }
 
@@ -249,17 +249,18 @@ async function deleteAllFiles(req, res) {
         fs.unlinkSync(filePath);
         await file.destroy();
       } catch (error) {
-        console.error('Error al eliminar el archivo:', filePath, error);
+        console.error("Error al eliminar el archivo:", filePath, error);
       }
     });
 
-    return res.status(200).json({ message: "Todos los archivos fueron eliminados correctamente" });
+    return res
+      .status(200)
+      .json({ message: "Todos los archivos fueron eliminados correctamente" });
   } catch (error) {
     console.error(error);
     return res.status(500).json({ message: "Error al eliminar los archivos" });
   }
 }
-
 
 module.exports = {
   getFiles,
@@ -268,5 +269,5 @@ module.exports = {
   getAllFiles,
   getFilesByName,
   downloadFile,
-  deleteAllFiles
+  deleteAllFiles,
 };
