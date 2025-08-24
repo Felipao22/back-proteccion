@@ -2,6 +2,7 @@ const path = require("path");
 const fs = require("fs");
 const ExcelJS = require("exceljs");
 const excelToPdf = require("./pdfControllers");
+const { File, User } = require("../db");
 
 const generateVisitExcel = async (req, res) => {
   try {
@@ -33,6 +34,14 @@ const generateVisitExcel = async (req, res) => {
       return res.status(400).json({ message: "Faltan campos obligatorios" });
     }
 
+    const user = await User.findOne({ where: { nombreEmpresa: empresa } });
+    if (!user) {
+      return res.status(404).json({ message: "Usuario no encontrado" });
+    }
+
+    const userEmail = user.email;
+
+    // Plantilla base
     const templatePath = path.join(
       __dirname,
       "../../files/Constancia visita/Constancia de Visita.xlsx"
@@ -41,16 +50,16 @@ const generateVisitExcel = async (req, res) => {
       return res.status(404).json({ message: "Archivo base no encontrado" });
     }
 
+    // Cargar plantilla
     const workbook = new ExcelJS.Workbook();
     await workbook.xlsx.readFile(templatePath);
-    const worksheet = workbook.getWorksheet(1); // primera hoja
+    const worksheet = workbook.getWorksheet(1);
 
-    // Insertar datos manteniendo estilos
+    // Insertar datos
     worksheet.getCell("A7").value = empresa;
     worksheet.getCell("A9").value = direccion;
     worksheet.getCell("D11").value = localidad;
     worksheet.getCell("I7").value = cuit;
-    // worksheet.getCell('D5').value = responsable;
     worksheet.getCell("I9").value = fechaVisita;
     // worksheet.getCell('A9').value = observaciones || '';
     worksheet.getCell("A11").value = provincia;
@@ -73,28 +82,51 @@ const generateVisitExcel = async (req, res) => {
       wrapText: true,
     };
 
-    // Generar nombre único
+    // Formatear nombre con fecha (DD/MM/AA)
     const date = new Date();
-    const timestamp = `${date.getFullYear()}-${
-      date.getMonth() + 1
-    }-${date.getDate()}_${date.getHours()}-${date.getMinutes()}-${date.getSeconds()}`;
-    const outputFileName = `Constancia-de-Visita-${timestamp}.xlsx`;
+    const day = String(date.getDate()).padStart(2, "0");
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const year = String(date.getFullYear()).slice(-2);
+    const formattedDate = `${day}-${month}-${year}`;
 
-    const outputDir = path.join(__dirname, "../files/generated");
+    const outputFileName = `Constancia-de-Visita-${formattedDate}.xlsx`;
+
+    const outputDir = path.join("uploads");
     fs.mkdirSync(outputDir, { recursive: true });
     const outputPath = path.join(outputDir, outputFileName);
 
+    // Guardar Excel temporal
     await workbook.xlsx.writeFile(outputPath);
-    await excelToPdf(outputPath);
+
+    // Convertir a PDF
+    const pdfPath = await excelToPdf(outputPath);
+    const pdfFullPath = path.resolve(pdfPath);
+
+    // Normalizar a ruta relativa con "/" (para DB y URLs)
+    const relativePath = path
+      .join("uploads", path.basename(pdfFullPath))
+      .replace(/\\/g, "/");
+
+    const stats = fs.statSync(pdfFullPath);
+
+    // Guardar en DB
+    const fileRecord = await File.create({
+      type: "application/pdf",
+      name: path.basename(pdfFullPath),
+      data: relativePath,
+      size: stats.size,
+      userEmail,
+      kindId: "12",
+    });
 
     return res.status(200).json({
-      message: "Archivo generado correctamente",
-      excelPath: `files/generated/${outputFileName}`,
-      pdfPath: `files/generated/${outputFileName.replace(/\.xlsx?$/, ".pdf")}`,
+      message: "Archivo generado y guardado en la base de datos",
+      file: fileRecord,
+      pdfUrl: `/${relativePath}`, // lista para servir con express.static
     });
   } catch (error) {
-    console.error("Error al generar el archivo Excel:", error);
-    res.status(500).json({ message: "Error interno al generar el Excel" });
+    console.error("Error al generar el archivo:", error);
+    res.status(500).json({ message: "Error interno al generar el archivo" });
   }
 };
 
