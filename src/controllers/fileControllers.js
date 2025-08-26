@@ -262,6 +262,28 @@ async function deleteAllFiles(req, res) {
   }
 }
 
+async function getFilesbyKindId(req, res) {
+  try {
+    const { kindId } = req.params;
+    const files = await File.findAll({
+      where: { kindId },
+      order: [["createdAt", "DESC"]],
+    });
+    if (files.length === 0) {
+      return res
+        .status(404)
+        .json({ message: "No se encontraron archivos para este tipo" });
+    }
+    return res.status(200).json({
+      message: `Archivo encontrado según tipo: ${kindId}`,
+      data: files,
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: "Error interno del servidor" });
+  }
+}
+
 module.exports = {
   getFiles,
   uploadFile,
@@ -270,4 +292,5 @@ module.exports = {
   getFilesByName,
   downloadFile,
   deleteAllFiles,
+  getFilesbyKindId,
 };
