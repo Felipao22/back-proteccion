@@ -21,6 +21,7 @@ router.post("/", upload.single("file"), isAuth, uploadFile);
 // http://localhost:3001/file
 router.get("/", async (req, res) => {
   const { name } = req.query;
+  console.log("name", name);
   try {
     return getFiles(name).then((files) => res.send(files));
   } catch (error) {
@@ -28,11 +29,11 @@ router.get("/", async (req, res) => {
   }
 });
 
-router.get("/:id", isAuth, downloadFile);
+router.get("/:id", downloadFile);
 
-router.delete("/:id", isAuth, deleteFileById);
+router.delete("/:id", deleteFileById);
 
-router.delete("/", isAuth, deleteAllFiles);
+router.delete("/", deleteAllFiles);
 
 router.get("/kind/:kindId", getFilesbyKindId);
 
