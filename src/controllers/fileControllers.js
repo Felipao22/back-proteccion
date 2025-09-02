@@ -270,9 +270,10 @@ async function getFilesbyKindId(req, res) {
       order: [["createdAt", "DESC"]],
     });
     if (files.length === 0) {
-      return res
-        .status(404)
-        .json({ message: "No se encontraron archivos para este tipo" });
+      return res.status(200).json({
+        message: "No se encontraron archivos para este tipo",
+        data: [],
+      });
     }
     return res.status(200).json({
       message: `Archivo encontrado según tipo: ${kindId}`,
