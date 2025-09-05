@@ -1,9 +1,9 @@
-const { Router } = require ("express");
-const { getAllCities } = require('../controllers/cityControllers');
+const { Router } = require("express");
+const { getAllCities } = require("../controllers/cityControllers");
+const { isAuth } = require("../controllers/authControllers");
 
 const router = Router();
 
-router.get('/', getAllCities);
-
+router.get("/", isAuth, getAllCities);
 
 module.exports = router;

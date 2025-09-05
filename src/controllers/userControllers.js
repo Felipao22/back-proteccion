@@ -34,8 +34,11 @@ async function getUsers() {
     });
 
     // Desencriptar las contraseñas de cada usuario
-    const usersWithDecryptedPasswords = foundUsers.map(user => {
-      const decryptedPassword = CryptoJS.AES.decrypt(user.password, process.env.PASS_SEC).toString(CryptoJS.enc.Utf8);
+    const usersWithDecryptedPasswords = foundUsers.map((user) => {
+      const decryptedPassword = CryptoJS.AES.decrypt(
+        user.password,
+        process.env.PASS_SEC
+      ).toString(CryptoJS.enc.Utf8);
       return {
         ...user.toJSON(), // Convertir el objeto Sequelize a un objeto simple
         password: decryptedPassword, // Sobrescribir el campo password con la versión desencriptada
@@ -43,12 +46,10 @@ async function getUsers() {
     });
 
     return usersWithDecryptedPasswords;
-
   } catch (e) {
     return `No se encontraron usuarios cargados en la base de datos, ${e.message}`;
   }
 }
-
 
 async function getUserByEmailController(req, res) {
   const { email } = req.params;
@@ -92,7 +93,6 @@ async function updateUserByEmailController(req, res) {
   }
 }
 
-
 async function updateUserByEmail(email, modification) {
   try {
     const [numUpdatedRows] = await User.update(modification, {
@@ -104,7 +104,6 @@ async function updateUserByEmail(email, modification) {
     return false;
   }
 }
-
 
 async function banUserController(req, res) {
   const { email } = req.params;
@@ -253,11 +252,14 @@ async function createUserController(req, res) {
       }
     });
 
-    res.status(201).json({ message: "Establecimiento/Obra agregada y correo enviado", newUser });
+    res.status(201).json({
+      message: "Establecimiento/Obra agregada y correo enviado",
+      newUser,
+    });
   } catch (error) {
-    return res
-      .status(500)
-      .json({ warning: `Ocurrió un error al agregar el Establecimiento/Obra: ${error.message}` });
+    return res.status(500).json({
+      warning: `Ocurrió un error al agregar el Establecimiento/Obra: ${error.message}`,
+    });
   }
 }
 
@@ -283,7 +285,7 @@ async function createEmployeeController(req, res) {
       password: CryptoJS.AES.encrypt(password, process.env.PASS_SEC).toString(),
     });
 
-      res.status(201).json({ message: "Empleado creado", user });
+    res.status(201).json({ message: "Empleado creado", user });
   } catch (error) {
     res.status(500).send(`Error: ${error}`);
   }
@@ -293,6 +295,7 @@ async function loginController(req, res) {
   const { email, password } = req.body;
 
   try {
+    // --- Caso admin
     const userAdmin = await User.findOne({ where: { email, isAdmin: true } });
     if (userAdmin) {
       const decryptedPassword = CryptoJS.AES.decrypt(
@@ -307,6 +310,14 @@ async function loginController(req, res) {
 
       const token = generateJWTToken(userAdmin.userId);
 
+      // Guardar en cookie segura
+      res.cookie("token", token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "none",
+        maxAge: 24 * 60 * 60 * 1000, // 1 día
+      });
+
       return res.status(200).json({
         message:
           "Administrador has iniciado sesión con éxito. ¡Bienvenido de nuevo!",
@@ -315,9 +326,8 @@ async function loginController(req, res) {
       });
     }
 
-    const userLogin = await User.findOne({
-      where: { email },
-    });
+    // --- Caso usuario normal
+    const userLogin = await User.findOne({ where: { email } });
 
     if (!userLogin) {
       return res.status(404).json({ error: "Usuario no encontrado" });
@@ -339,6 +349,14 @@ async function loginController(req, res) {
 
     const token = generateJWTToken(userLogin.userId);
 
+    // Guardar en cookie segura
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "none",
+      maxAge: 24 * 60 * 60 * 1000,
+    });
+
     return res.status(200).json({
       message: "Has iniciado sesión con éxito. ¡Bienvenido de nuevo!",
       user: userLogin,
@@ -354,17 +372,21 @@ async function loginController(req, res) {
 
 function generateJWTToken(userId) {
   return jwt.sign({ userId }, process.env.JWT_SEC, {
-    expiresIn: "1h", // el token expira en 1 hora
+    expiresIn: "1d", // el token expira en 1 día
   });
 }
 
 async function logoutController(req, res) {
   try {
-    return res
-      .status(200)
-      .json({
-        message: "Has cerrado sesión con éxito. ¡Hasta la próxima vez!",
-      });
+    res.clearCookie("token", {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "none",
+    });
+
+    return res.status(200).json({
+      message: "Has cerrado sesión con éxito. ¡Hasta la próxima vez!",
+    });
   } catch (error) {
     return res
       .status(500)
@@ -829,5 +851,5 @@ module.exports = {
   getEmailsByEmail,
   sendchangePasswordUsercontroller,
   changeUserPasswordController,
-  changePasswordForAllsController
+  changePasswordForAllsController,
 };

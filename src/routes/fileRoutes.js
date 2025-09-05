@@ -19,9 +19,8 @@ router.post("/", upload.single("file"), isAuth, uploadFile);
 
 //GET Files con opcion query name
 // http://localhost:3001/file
-router.get("/", async (req, res) => {
+router.get("/", isAuth, async (req, res) => {
   const { name } = req.query;
-  console.log("name", name);
   try {
     return getFiles(name).then((files) => res.send(files));
   } catch (error) {
@@ -29,12 +28,12 @@ router.get("/", async (req, res) => {
   }
 });
 
-router.get("/:id", downloadFile);
+router.get("/:id", isAuth, downloadFile);
 
-router.delete("/:id", deleteFileById);
+router.delete("/:id", isAuth, deleteFileById);
 
-router.delete("/", deleteAllFiles);
+router.delete("/", isAuth, deleteAllFiles);
 
-router.get("/kind/:kindId", getFilesbyKindId);
+router.get("/kind/:kindId", isAuth, getFilesbyKindId);
 
 module.exports = router;
