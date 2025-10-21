@@ -30,6 +30,7 @@ const generateVisitExcel = async (req, res) => {
       notas,
       otros,
       inputOtros,
+      areas,
     } = req.body;
 
     if (!empresa || !direccion || !localidad || !cuit || !fechaVisita) {
@@ -83,6 +84,7 @@ const generateVisitExcel = async (req, res) => {
       worksheet.getCell("G22").value = `${currentOtrosValue} ${inputOtros}`;
       worksheet.getCell("G22").alignment = { wrapText: true };
     }
+    worksheet.getCell("A25").value = areas || "";
     worksheet.getCell("A33").value = notas || "";
     worksheet.getCell("A33").alignment = {
       vertical: "top",
