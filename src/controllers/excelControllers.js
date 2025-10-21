@@ -28,6 +28,8 @@ const generateVisitExcel = async (req, res) => {
       relevamiento,
       capacitacion,
       notas,
+      otros,
+      inputOtros,
     } = req.body;
 
     if (!empresa || !direccion || !localidad || !cuit || !fechaVisita) {
@@ -75,6 +77,12 @@ const generateVisitExcel = async (req, res) => {
     worksheet.getCell("L19").value = inspeccion ? "✓" : "";
     worksheet.getCell("L20").value = relevamiento ? "✓" : "";
     worksheet.getCell("L21").value = capacitacion ? "✓" : "";
+    worksheet.getCell("L22").value = otros ? "✓" : "";
+    if (inputOtros) {
+      const currentOtrosValue = worksheet.getCell("G22").value || "Otros:";
+      worksheet.getCell("G22").value = `${currentOtrosValue} ${inputOtros}`;
+      worksheet.getCell("G22").alignment = { wrapText: true };
+    }
     worksheet.getCell("A33").value = notas || "";
     worksheet.getCell("A33").alignment = {
       vertical: "top",
