@@ -110,6 +110,17 @@ const generateVisitExcel = async (req, res) => {
     const pdfPath = await excelToPdf(outputPath);
     const pdfFullPath = path.resolve(pdfPath);
 
+    try {
+      if (fs.existsSync(outputPath)) {
+        fs.unlinkSync(outputPath);
+        console.log(`🧹 Archivo Excel eliminado: ${outputPath}`);
+      }
+    } catch (deleteErr) {
+      console.warn(
+        `⚠ No se pudo eliminar el Excel temporal: ${deleteErr.message}`
+      );
+    }
+
     // Normalizar a ruta relativa con "/" (para DB y URLs)
     const relativePath = path
       .join("uploads", path.basename(pdfFullPath))
