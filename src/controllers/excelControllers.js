@@ -31,6 +31,7 @@ const generateVisitExcel = async (req, res) => {
       otros,
       inputOtros,
       areas,
+      documentacion,
     } = req.body;
 
     if (!empresa || !direccion || !localidad || !cuit || !fechaVisita) {
@@ -64,7 +65,7 @@ const generateVisitExcel = async (req, res) => {
     worksheet.getCell("D11").value = localidad;
     worksheet.getCell("I7").value = cuit;
     worksheet.getCell("I9").value = fechaVisita;
-    // worksheet.getCell('A9').value = observaciones || '';
+    worksheet.getCell("A14").value = documentacion || "";
     worksheet.getCell("A11").value = provincia;
     worksheet.getCell("F17").value = botiquines ? "✓" : "";
     worksheet.getCell("F18").value = extintores ? "✓" : "";
