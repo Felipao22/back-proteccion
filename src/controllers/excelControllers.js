@@ -4,17 +4,23 @@ const ExcelJS = require("exceljs");
 const excelToPdf = require("./pdfControllers");
 const { File, User } = require("../db");
 const formatDate = require("../utils/formatDate");
+const multer = require("multer");
+const { imageSize } = require("image-size");
+const sharp = require("sharp");
+
+const storage = multer.memoryStorage();
+const upload = multer({ storage });
 
 const generateVisitExcel = async (req, res) => {
   try {
+    const data = JSON.parse(req.body.data || "{}");
+
     const {
       empresa,
       direccion,
       localidad,
       cuit,
-      responsable,
       fechaVisita,
-      observaciones,
       provincia,
       botiquines,
       extintores,
@@ -28,22 +34,22 @@ const generateVisitExcel = async (req, res) => {
       inspeccion,
       relevamiento,
       capacitacion,
-      notas,
       otros,
       inputOtros,
       areas,
+      notas,
       documentacion,
-    } = req.body;
+    } = data;
+
+    const imageFiles = req.files || [];
 
     if (!empresa || !direccion || !localidad || !cuit || !fechaVisita) {
       return res.status(400).json({ message: "Faltan campos obligatorios" });
     }
 
     const user = await User.findOne({ where: { nombreEmpresa: empresa } });
-    if (!user) {
+    if (!user)
       return res.status(404).json({ message: "Usuario no encontrado" });
-    }
-
     const userEmail = user.email;
 
     // Plantilla base
@@ -55,12 +61,11 @@ const generateVisitExcel = async (req, res) => {
       return res.status(404).json({ message: "Archivo base no encontrado" });
     }
 
-    // Cargar plantilla
     const workbook = new ExcelJS.Workbook();
     await workbook.xlsx.readFile(templatePath);
     const worksheet = workbook.getWorksheet(1);
 
-    // Insertar datos
+    // Insertar datos en Excel
     worksheet.getCell("A7").value = empresa;
     worksheet.getCell("A9").value = direccion;
     worksheet.getCell("D11").value = localidad;
@@ -94,38 +99,72 @@ const generateVisitExcel = async (req, res) => {
       wrapText: true,
     };
 
-    const outputFileName = `Constancia-de-Visita-${formatDate()}.xlsx`;
+    const startRow = 35;
+    const maxCols = 3;
+    const imageWidth = 200;
+    const maxHeight = 300;
+    const colSpacing = 0.2;
+    const leftMargin = 0.5;
 
+    let rowIndex = startRow;
+    let colIndex = leftMargin;
+
+    for (let i = 0; i < imageFiles.length; i += maxCols) {
+      const rowImages = imageFiles.slice(i, i + maxCols);
+      const heights = [];
+
+      // Recorro cada imagen de la fila
+      for (const file of rowImages) {
+        // Corrijo orientación (EXIF)
+        const correctedBuffer = await sharp(file.buffer).rotate().toBuffer();
+
+        // Calculo dimensiones proporcionales
+        const { width, height } = imageSize(correctedBuffer);
+        const aspectRatio = height / width;
+        const imageHeight = Math.min(imageWidth * aspectRatio, maxHeight);
+        heights.push(imageHeight);
+
+        // Agrego imagen al Excel
+        const imageId = workbook.addImage({
+          buffer: correctedBuffer,
+          extension: "jpeg",
+        });
+
+        worksheet.addImage(imageId, {
+          tl: { col: colIndex, row: rowIndex },
+          ext: { width: imageWidth, height: imageHeight },
+        });
+
+        // Avanzo a la siguiente columna
+        colIndex += imageWidth / 50 + colSpacing;
+      }
+
+      // Avanzo hacia abajo según la imagen más alta de la fila
+      const rowMaxHeight = Math.max(...heights);
+      rowIndex += rowMaxHeight / 20 + 1;
+      colIndex = leftMargin;
+    }
+
+    // Guardar Excel temporal
+    const outputFileName = `Constancia-de-Visita-${formatDate()}.xlsx`;
     const outputDir = path.join("uploads");
     fs.mkdirSync(outputDir, { recursive: true });
     const outputPath = path.join(outputDir, outputFileName);
-
-    // Guardar Excel temporal
     await workbook.xlsx.writeFile(outputPath);
 
     // Convertir a PDF
     const pdfPath = await excelToPdf(outputPath);
     const pdfFullPath = path.resolve(pdfPath);
 
-    try {
-      if (fs.existsSync(outputPath)) {
-        fs.unlinkSync(outputPath);
-        console.log(`🧹 Archivo Excel eliminado: ${outputPath}`);
-      }
-    } catch (deleteErr) {
-      console.warn(
-        `⚠ No se pudo eliminar el Excel temporal: ${deleteErr.message}`
-      );
-    }
+    // Eliminar Excel temporal
+    if (fs.existsSync(outputPath)) fs.unlinkSync(outputPath);
 
-    // Normalizar a ruta relativa con "/" (para DB y URLs)
+    // Guardar PDF en DB
     const relativePath = path
       .join("uploads", path.basename(pdfFullPath))
       .replace(/\\/g, "/");
-
     const stats = fs.statSync(pdfFullPath);
 
-    // Guardar en DB
     const fileRecord = await File.create({
       type: "application/pdf",
       name: path.basename(pdfFullPath),
@@ -138,7 +177,7 @@ const generateVisitExcel = async (req, res) => {
     return res.status(200).json({
       message: "Archivo generado y guardado en la base de datos",
       file: fileRecord,
-      pdfUrl: `/${relativePath}`, // lista para servir con express.static
+      pdfUrl: `/${relativePath}`,
     });
   } catch (error) {
     console.error("Error al generar el archivo:", error);
@@ -146,4 +185,4 @@ const generateVisitExcel = async (req, res) => {
   }
 };
 
-module.exports = generateVisitExcel;
+module.exports = { generateVisitExcel, upload };

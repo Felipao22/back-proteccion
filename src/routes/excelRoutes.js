@@ -1,9 +1,18 @@
 const { Router } = require("express");
-const generateVisitExcel = require("../controllers/excelControllers");
+
 const { isAuth } = require("../controllers/authControllers");
+const {
+  upload,
+  generateVisitExcel,
+} = require("../controllers/excelControllers");
 
 const router = Router();
 
-router.post("/generate-visit-excel", isAuth, generateVisitExcel);
+router.post(
+  "/generate-visit-excel",
+  isAuth,
+  upload.array("imagenes"),
+  generateVisitExcel
+);
 
 module.exports = router;
