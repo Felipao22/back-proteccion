@@ -10,6 +10,7 @@ const {
   deleteFileById,
   deleteAllFiles,
   getFilesbyKindId,
+  filterFiles,
 } = require("../controllers/fileControllers");
 const { isAuth } = require("../controllers/authControllers");
 
@@ -35,5 +36,7 @@ router.delete("/:id", isAuth, deleteFileById);
 router.delete("/", isAuth, deleteAllFiles);
 
 router.get("/kind/:kindId", isAuth, getFilesbyKindId);
+
+router.post("/filter", isAuth, filterFiles);
 
 module.exports = router;
