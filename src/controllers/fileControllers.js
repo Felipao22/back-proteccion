@@ -285,6 +285,89 @@ async function getFilesbyKindId(req, res) {
   }
 }
 
+async function filterFiles(req, res) {
+  try {
+    const { startDate, endDate, kindId, userId, page = 1 } = req.body;
+    console.log(req.body);
+    const limit = 20;
+    const offset = (page - 1) * limit;
+
+    // Objeto base para filtros dinámicos
+    const where = {};
+
+    // Filtro por rango de fechas
+    if (startDate && endDate) {
+      const [startDay, startMonth, startYear] = startDate.split("/");
+      const [endDay, endMonth, endYear] = endDate.split("/");
+
+      const start = new Date(
+        `${startYear}-${startMonth}-${startDay}T00:00:00.000Z`
+      );
+      const end = new Date(`${endYear}-${endMonth}-${endDay}T23:59:59.999Z`);
+      console.log("start", start);
+      console.log("end", end);
+
+      if (isNaN(start.getTime()) || isNaN(end.getTime())) {
+        return res.status(400).json({ message: "Formato de fecha inválido" });
+      }
+
+      where.createdAt = { [Op.between]: [start, end] };
+    }
+
+    // Filtro por categoría
+    if (kindId && kindId.trim() !== "") {
+      where.kindId = kindId;
+    }
+
+    // Filtro por usuario
+    if (userId && userId.trim() !== "") {
+      const user = await User.findOne({
+        where: { userId },
+        attributes: ["email"],
+        raw: true,
+      });
+
+      if (!user) {
+        return res
+          .status(404)
+          .json({ message: `No se encontró el usuario con id ${userId}` });
+      }
+
+      where.userEmail = user.email;
+    }
+
+    // Filtros dinámicos y paginación
+    const { rows: files, count: total } = await File.findAndCountAll({
+      where,
+      order: [["createdAt", "ASC"]],
+      limit,
+      offset,
+    });
+
+    const totalPages = Math.ceil(total / limit);
+
+    if (files.length === 0) {
+      return res.status(200).json({
+        message: "No se encontraron archivos con los filtros aplicados",
+        page,
+        totalPages,
+        total,
+        data: [],
+      });
+    }
+
+    return res.status(200).json({
+      message: "Archivos filtrados correctamente",
+      filtersApplied: { startDate, endDate, kindId, userId },
+      pagination: { page, limit, totalPages, total },
+      data: files,
+    });
+  } catch (error) {
+    console.error("Error en filterFiles:", error);
+    return res.status(500).json({ message: "Error interno del servidor" });
+  }
+}
+
 module.exports = {
   getFiles,
   uploadFile,
@@ -294,4 +377,5 @@ module.exports = {
   downloadFile,
   deleteAllFiles,
   getFilesbyKindId,
+  filterFiles,
 };
