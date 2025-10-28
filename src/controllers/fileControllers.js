@@ -287,8 +287,12 @@ async function getFilesbyKindId(req, res) {
 
 async function filterFiles(req, res) {
   try {
-    const { startDate, endDate, kindId, userId, page = 1 } = req.body;
+    let { startDate, endDate, kindId, userId, page } = req.body;
     console.log(req.body);
+    if (!page || isNaN(page) || page < 1) {
+      page = 1;
+    }
+
     const limit = 20;
     const offset = (page - 1) * limit;
 
