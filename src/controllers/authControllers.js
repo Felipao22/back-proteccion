@@ -15,7 +15,6 @@ const isAuth = (req, res, next) => {
   let token = req.cookies?.token;
   if (!token && req.get("Authorization")) {
     token = req.get("Authorization").split(" ")[1];
-    console.log("Authorization", token);
   }
 
   if (!token) {
