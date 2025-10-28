@@ -288,7 +288,7 @@ async function getFilesbyKindId(req, res) {
 async function filterFiles(req, res) {
   try {
     let { startDate, endDate, kindId, userId, page } = req.body;
-    console.log(req.body);
+
     if (!page || isNaN(page) || page < 1) {
       page = 1;
     }
