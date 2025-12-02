@@ -18,6 +18,7 @@ const {
   sendchangePasswordUsercontroller,
   changeUserPasswordController,
   changePasswordForAllsController,
+  getBranches,
 } = require("../controllers/userControllers");
 const { isAuth } = require("../controllers/authControllers");
 
@@ -26,6 +27,8 @@ const router = Router();
 //GET ALL USERS
 // http://localhost:3001/user
 router.get("/", isAuth, getUsersController);
+
+router.get("/branches", isAuth, getBranches);
 
 router.get("/:email", isAuth, getUserByEmailController);
 
