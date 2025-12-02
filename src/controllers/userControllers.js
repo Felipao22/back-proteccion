@@ -311,12 +311,21 @@ async function loginController(req, res) {
       const token = generateJWTToken(userAdmin.userId);
 
       // Guardar en cookie segura
-      res.cookie("token", token, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: "none",
-        maxAge: 24 * 60 * 60 * 1000, // 1 día
-      });
+      if (process.env.NODE_ENV === "production") {
+        res.cookie("token", token, {
+          domain: "proteccionlaboral.com.ar",
+          path: "/",
+          httpOnly: true,
+          secure: true,
+          sameSite: "None",
+        });
+      } else {
+        res.cookie("token", token, {
+          domain: "localhost",
+          path: "/",
+          httpOnly: true,
+        });
+      }
 
       return res.status(200).json({
         message:
@@ -349,13 +358,21 @@ async function loginController(req, res) {
 
     const token = generateJWTToken(userLogin.userId);
 
-    // Guardar en cookie segura
-    res.cookie("token", token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "none",
-      maxAge: 24 * 60 * 60 * 1000,
-    });
+    if (process.env.NODE_ENV === "production") {
+      res.cookie("token", token, {
+        domain: "proteccionlaboral.com.ar",
+        path: "/",
+        httpOnly: true,
+        secure: true,
+        sameSite: "None",
+      });
+    } else {
+      res.cookie("token", token, {
+        domain: "localhost",
+        path: "/",
+        httpOnly: true,
+      });
+    }
 
     return res.status(200).json({
       message: "Has iniciado sesión con éxito. ¡Bienvenido de nuevo!",
@@ -378,11 +395,7 @@ function generateJWTToken(userId) {
 
 async function logoutController(req, res) {
   try {
-    res.clearCookie("token", {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "none",
-    });
+    res.clearCookie("token");
 
     return res.status(200).json({
       message: "Has cerrado sesión con éxito. ¡Hasta la próxima vez!",
