@@ -845,6 +845,63 @@ const apiUsers = async () => {
   }
 };
 
+const getBranches = async (req, res) => {
+  let { page } = req.query;
+
+  page = parseInt(page);
+  if (!page || page < 1) page = 1;
+
+  const limit = 10;
+  const offset = (page - 1) * limit;
+
+  try {
+    const { rows: branches, count: total } = await User.findAndCountAll({
+      where: {
+        isAdmin: false,
+        isSuperAdmin: false,
+      },
+      attributes: [
+        "userId",
+        "email",
+        "nombreEmpresa",
+        "nombreSede",
+        "cuit",
+        "ciudad",
+        "direccion",
+        "telefono",
+        "emails",
+        "accessUser",
+        "emailJefe",
+        "active",
+        "createdAt",
+      ],
+      order: [["createdAt", "ASC"]],
+      limit,
+      offset,
+    });
+
+    const totalPages = Math.ceil(total / limit);
+
+    if (branches.length === 0) {
+      return res.status(404).json({ error: "No se encontraron empresas" });
+    }
+
+    return res.status(200).json({
+      message: "Se encontraron las empresas!",
+      data: branches,
+      pagination: {
+        page,
+        limit,
+        totalPages,
+        total,
+      },
+    });
+  } catch (error) {
+    console.error("Error en getBranches:", error);
+    res.status(500).json({ error: "Error en el sistema" });
+  }
+};
+
 module.exports = {
   getUsersController,
   getUserByEmailController,
@@ -865,4 +922,5 @@ module.exports = {
   sendchangePasswordUsercontroller,
   changeUserPasswordController,
   changePasswordForAllsController,
+  getBranches,
 };
