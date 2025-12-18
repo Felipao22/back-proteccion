@@ -14,9 +14,8 @@ server.name = "API";
 const ACCEPTED_ORIGINS = [
   "http://localhost:5173",
   "http://localhost:3001",
-  "https://proteccion-back.onrender.com",
-  "https://proteccion-app.vercel.app",
   "http://localhost:8081",
+  "http://api.back-proteccion.site",
 ];
 
 server.use(
