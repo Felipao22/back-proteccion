@@ -29,7 +29,7 @@ const PORT = process.env.PORT ?? 3001;
 
 // Syncing all the models at once.
 conn.sync({ force: false }).then(() => {
-  server.listen(3001, "0.0.0.0", async () => {
+  server.listen(PORT, "0.0.0.0", async () => {
     await apiCity();
     await apiCategory();
     await apiKind();
