@@ -25,7 +25,7 @@ const { apiUsers } = require("./src/controllers/userControllers.js");
 3;
 const { apiCategory } = require("./src/controllers/categoryControllers.js");
 
-const PORT = process.env.PORT ?? 3001;
+const PORT = process.env.PORT ?? 3002;
 
 // Syncing all the models at once.
 conn.sync({ force: false }).then(() => {
