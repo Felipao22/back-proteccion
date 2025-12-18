@@ -1,0 +1,58 @@
+name: Deploy API
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1️⃣ Checkout
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # 2️⃣ Crear carpeta /api si no existe
+      - name: Ensure API directory exists on VPS
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          password: ${{ secrets.SSH_PASSWORD }}
+          port: ${{ secrets.SSH_PORT }}
+          script: |
+            mkdir -p /api/uploads
+
+      # 3️⃣ Subir código (NO sube .env ni uploads)
+      - name: Upload API code to VPS
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          password: ${{ secrets.SSH_PASSWORD }}
+          port: ${{ secrets.SSH_PORT }}
+          source: ./
+          target: /api
+          strip_components: 1
+
+      # 4️⃣ Build + Run Docker
+      - name: Build & Run API with Docker Compose
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          password: ${{ secrets.SSH_PASSWORD }}
+          port: ${{ secrets.SSH_PORT }}
+          script: |
+            cd /api
+
+            if [ ! -f .env ]; then
+              echo "❌ ERROR: .env no existe en /api"
+              exit 1
+            fi
+
+            docker compose down
+            docker compose build --no-cache
+            docker compose up -d
