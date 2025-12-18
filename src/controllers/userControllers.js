@@ -529,8 +529,8 @@ async function forgotPasswordController(req, res) {
     // Determinar la URL base según el entorno
     const baseUrl =
       process.env.NODE_ENV === "production"
-        ? process.env.DEVELOPMENT_BASE_URL
-        : process.env.PRODUCTION_URL;
+        ? process.env.PRODUCTION_URL
+        : process.env.DEVELOPMENT_BASE_URL;
 
     // Construir el enlace de restablecimiento de contraseña
     const resetLink = `${baseUrl}/resetPassword?token=${resetToken}`;
@@ -675,8 +675,8 @@ async function sendchangePasswordUsercontroller(req, res) {
     // Determinar la URL base según el entorno
     const baseUrl =
       process.env.NODE_ENV === "production"
-        ? process.env.DEVELOPMENT_BASE_URL
-        : process.env.PRODUCTION_URL;
+        ? process.env.PRODUCTION_URL
+        : process.env.DEVELOPMENT_BASE_URL;
 
     // Construir el enlace de restablecimiento de contraseña
     const resetLink = `${baseUrl}/changePasswordUser?token=${resetToken}`;
