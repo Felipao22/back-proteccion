@@ -15,7 +15,7 @@ const ACCEPTED_ORIGINS = [
   "http://localhost:5173",
   "http://localhost:3001",
   "http://localhost:8081",
-  "http://api.back-proteccion.site",
+  "https://docker.back-proteccion.site/",
 ];
 
 server.use(
