@@ -1,3 +1,4 @@
+require("dotenv").config();
 const jsonUsers = require("../json/users.json");
 const users = jsonUsers.usuarios;
 const { User, File } = require("../db");
@@ -5,7 +6,6 @@ const CryptoJS = require("crypto-js");
 const jwt = require("jsonwebtoken");
 const transporter = require("../helpers/mailer");
 const generateEmailTemplate = require("../helpers/templateUser");
-require("dotenv").config();
 
 //Funcion del GET / GET ALL USERS
 async function getUsersController(req, res) {
