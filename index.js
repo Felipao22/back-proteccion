@@ -24,6 +24,7 @@ const { apiKind } = require("./src/controllers/kindControllers.js");
 const { apiUsers } = require("./src/controllers/userControllers.js");
 3;
 const { apiCategory } = require("./src/controllers/categoryControllers.js");
+require("dotenv").config();
 
 const PORT = process.env.PORT ?? 3002;
 
