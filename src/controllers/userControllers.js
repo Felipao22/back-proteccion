@@ -314,7 +314,7 @@ async function loginController(req, res) {
       // Guardar en cookie segura
       if (process.env.NODE_ENV === "production") {
         res.cookie("token", token, {
-          domain: process.env.PRODUCTION_URL,
+          domain: ".back-proteccion.site",
           path: "/",
           httpOnly: true,
           secure: true,
@@ -370,7 +370,7 @@ async function loginController(req, res) {
 
     if (process.env.NODE_ENV === "production") {
       res.cookie("token", token, {
-        domain: process.env.PRODUCTION_URL,
+        domain: ".back-proteccion.site",
         path: "/",
         httpOnly: true,
         secure: true,
