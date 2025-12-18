@@ -23,7 +23,7 @@ jobs:
           password: ${{ secrets.SSH_PASSWORD }}
           port: ${{ secrets.SSH_PORT }}
           script: |
-            mkdir -p /api/uploads
+             mkdir -p /root/proteccion-app/api/uploads
 
       # 3️⃣ Subir código (NO sube .env ni uploads)
       - name: Upload API code to VPS
@@ -34,7 +34,7 @@ jobs:
           password: ${{ secrets.SSH_PASSWORD }}
           port: ${{ secrets.SSH_PORT }}
           source: ./
-          target: /api
+          target: /root/proteccion-app/api
           strip_components: 1
 
       # 4️⃣ Build + Run Docker
@@ -46,7 +46,7 @@ jobs:
           password: ${{ secrets.SSH_PASSWORD }}
           port: ${{ secrets.SSH_PORT }}
           script: |
-            cd /api
+            cd /root/proteccion-app/api
 
             if [ ! -f .env ]; then
               echo "❌ ERROR: .env no existe en /api"
