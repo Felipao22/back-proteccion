@@ -326,11 +326,20 @@ async function loginController(req, res) {
           httpOnly: true,
         });
       }
+      const filteredAdmin = {
+        accessUser: userAdmin.accessUser,
+        active: userAdmin.active,
+        isAdmin: userAdmin.isAdmin,
+        isSuperAdmin: userAdmin.isSuperAdmin,
+        lastName: userAdmin.lastName,
+        name: userAdmin.name,
+        userId: userAdmin.userId,
+      };
 
       return res.status(200).json({
         message:
           "Administrador has iniciado sesión con éxito. ¡Bienvenido de nuevo!",
-        user: userAdmin,
+        user: filteredAdmin,
         token,
       });
     }
@@ -374,9 +383,17 @@ async function loginController(req, res) {
       });
     }
 
+    const filteredUser = {
+      isAdmin: userLogin.isAdmin,
+      isSuperAdmin: userLogin.isSuperAdmin,
+      nombreEmpresa: userLogin.nombreEmpresa,
+      nombreSede: userLogin.nombreSede,
+      userId: userLogin.userId,
+    };
+
     return res.status(200).json({
       message: "Has iniciado sesión con éxito. ¡Bienvenido de nuevo!",
-      user: userLogin,
+      user: filteredUser,
       token,
     });
   } catch (error) {
