@@ -1,0 +1,20 @@
+node_modules
+uploads
+.env
+.git
+.gitignore
+Dockerfile
+docker-compose.yml
+README.md
+
+# Tests and coverage
+coverage
+*.spec.ts
+*.test.ts
+jest.config.*
+vitest.config.*
+__tests__/
+
+# Cache
+.pnpm-store
+.cache
