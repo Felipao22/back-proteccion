@@ -12,4 +12,4 @@ services:
     volumes:
       # Persistencia de uploads
       - /api/uploads:/app/uploads
-      - /api/files
+      - /api/files:/app/files
