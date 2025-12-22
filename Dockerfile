@@ -2,20 +2,19 @@ FROM node:20-alpine
 
 WORKDIR /app
 
-# Copiar dependencias
 COPY package*.json ./
-RUN npm install --production
+RUN npm install --production --omit=dev
 
-# Copiar código
 COPY . .
 
-# Crear carpeta uploads dentro del contenedor
-RUN mkdir -p /app/uploads
+RUN mkdir -p /app/uploads /app/files \
+    && addgroup -S app \
+    && adduser -S app -G app \
+    && chown -R app:app /app
 
-# Exponer puerto interno
-EXPOSE 3001
+USER app
 
-# Variables por defecto
+EXPOSE 3002
 ENV NODE_ENV=production
 
 CMD ["node", "index.js"]
