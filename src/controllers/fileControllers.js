@@ -59,7 +59,7 @@ async function uploadFile(req, res) {
       try {
         const decodedName = iconv.decode(
           Buffer.from(fileNameWithDate, "binary"),
-          encoding
+          encoding,
         );
         const newFile = File.create({
           name: decodedName,
@@ -160,7 +160,7 @@ async function getFiles(req, res) {
 
 //Funcion interna, es llamada por getFiles cuando no viene query name
 async function getAllFiles(req, res) {
-  let {page } = req.body;
+  let { page } = req.body;
   try {
     if (!page || isNaN(page) || page < 1) {
       page = 1;
@@ -175,9 +175,17 @@ async function getAllFiles(req, res) {
     });
     const totalPages = Math.ceil(total / limit);
     if (files.length === 0) {
-      return res.status(404).json({ message: "No se encontraron archivos", data: [], pagination: { page, limit, totalPages, total }});
+      return res.status(404).json({
+        message: "No se encontraron archivos",
+        data: [],
+        pagination: { page, limit, totalPages, total },
+      });
     }
-    return res.status(200).json({ message: "Archivos encontrados correctamente", data: files, pagination: { page, limit, totalPages, total } });
+    return res.status(200).json({
+      message: "Archivos encontrados correctamente",
+      data: files,
+      pagination: { page, limit, totalPages, total },
+    });
   } catch (error) {
     console.error(error);
     return res.status(500).json({ message: "Error interno del servidor" });
@@ -197,20 +205,20 @@ async function getFilesByName(name, req, res) {
       include: [{ model: Kind }],
     });
     if (foundFilessName.length) {
-      return res.status(200).json({ 
-        message: "Archivos encontrados correctamente", 
-        data: foundFilessName 
+      return res.status(200).json({
+        message: "Archivos encontrados correctamente",
+        data: foundFilessName,
       });
     } else {
-      return res.status(404).json({ 
+      return res.status(404).json({
         message: "No se encontraron archivos asociados",
-        data: []
+        data: [],
       });
     }
   } catch (error) {
     console.error(error);
-    return res.status(500).json({ 
-      message: `Error al buscar archivos: ${error.message}` 
+    return res.status(500).json({
+      message: `Error al buscar archivos: ${error.message}`,
     });
   }
 }
@@ -327,7 +335,7 @@ async function filterFiles(req, res) {
       const [endDay, endMonth, endYear] = endDate.split("/");
 
       const start = new Date(
-        `${startYear}-${startMonth}-${startDay}T00:00:00.000Z`
+        `${startYear}-${startMonth}-${startDay}T00:00:00.000Z`,
       );
       const end = new Date(`${endYear}-${endMonth}-${endDay}T23:59:59.999Z`);
       console.log("start", start);
@@ -394,6 +402,64 @@ async function filterFiles(req, res) {
   }
 }
 
+async function getFilesByEmail(req, res) {
+  const { email } = req.query;
+  let { page } = req.query;
+
+  console.log("QUERY:", req.query);
+
+  if (!email) {
+    return res.status(400).json({
+      message: "El parámetro email es obligatorio",
+    });
+  }
+
+  page = parseInt(page, 10);
+  if (isNaN(page) || page < 1) {
+    page = 1;
+  }
+
+  const limit = 20;
+  const offset = (page - 1) * limit;
+
+  try {
+    const { rows: files, count: total } = await File.findAndCountAll({
+      include: [
+        {
+          model: User,
+          where: { email },
+          attributes: [],
+        },
+      ],
+      order: [["createdAt", "DESC"]],
+      limit,
+      offset,
+      distinct: true,
+    });
+
+    const totalPages = Math.ceil(total / limit);
+
+    return res.status(200).json({
+      message:
+        files.length === 0
+          ? "No se encontraron archivos para este usuario"
+          : "Archivos encontrados para este usuario",
+      data: files,
+      pagination: {
+        page,
+        limit,
+        totalPages,
+        total,
+      },
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({
+      message: "Error interno del servidor",
+    });
+  }
+}
+
 module.exports = {
   getFiles,
   uploadFile,
@@ -404,4 +470,5 @@ module.exports = {
   deleteAllFiles,
   getFilesbyKindId,
   filterFiles,
+  getFilesByEmail,
 };

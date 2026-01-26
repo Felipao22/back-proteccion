@@ -11,6 +11,7 @@ const {
   deleteAllFiles,
   getFilesbyKindId,
   filterFiles,
+  getFilesByEmail,
 } = require("../controllers/fileControllers");
 const { isAuth } = require("../controllers/authControllers");
 
@@ -18,18 +19,18 @@ const { isAuth } = require("../controllers/authControllers");
 // http://localhost:3001/file
 router.post("/", upload.single("file"), isAuth, uploadFile);
 
-//GET Files con opcion query name
-// http://localhost:3001/file
-router.get("/", isAuth, getFiles);
-
-router.get("/:id", isAuth, downloadFile);
-
-router.delete("/:id", isAuth, deleteFileById);
-
-router.delete("/", isAuth, deleteAllFiles);
+router.get("/branch", isAuth, getFilesByEmail);
 
 router.get("/kind/:kindId", isAuth, getFilesbyKindId);
 
 router.post("/filter", isAuth, filterFiles);
+
+router.get("/", isAuth, getFiles);
+
+router.delete("/", isAuth, deleteAllFiles);
+
+router.get("/:id", isAuth, downloadFile);
+
+router.delete("/:id", isAuth, deleteFileById);
 
 module.exports = router;
