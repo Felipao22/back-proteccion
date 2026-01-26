@@ -20,14 +20,7 @@ router.post("/", upload.single("file"), isAuth, uploadFile);
 
 //GET Files con opcion query name
 // http://localhost:3001/file
-router.get("/", isAuth, async (req, res) => {
-  const { name } = req.query;
-  try {
-    return getFiles(name).then((files) => res.send(files));
-  } catch (error) {
-    return res.send(error);
-  }
-});
+router.get("/", isAuth, getFiles);
 
 router.get("/:id", isAuth, downloadFile);
 

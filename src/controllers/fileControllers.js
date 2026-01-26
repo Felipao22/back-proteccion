@@ -149,29 +149,44 @@ async function uploadFile(req, res) {
 }
 
 //Fucion del GET Files, redirecciona segun haya query name o no
-function getFiles(name) {
+async function getFiles(req, res) {
+  const { name } = req.query;
   if (name) {
-    return getFilesByName(name);
+    return await getFilesByName(name, req, res);
   } else {
-    return getAllFiles();
+    return await getAllFiles(req, res);
   }
 }
 
 //Funcion interna, es llamada por getFiles cuando no viene query name
-async function getAllFiles() {
+async function getAllFiles(req, res) {
+  let {page } = req.body;
   try {
-    const foundFilesComplete = await File.findAll({
-      order: [["createdAt", "DESC"]],
+    if (!page || isNaN(page) || page < 1) {
+      page = 1;
+    }
+
+    const limit = 20;
+    const offset = (page - 1) * limit;
+    const { rows: files, count: total } = await File.findAndCountAll({
+      order: [["createdAt", "ASC"]],
+      limit,
+      offset,
     });
-    return foundFilesComplete;
+    const totalPages = Math.ceil(total / limit);
+    if (files.length === 0) {
+      return res.status(404).json({ message: "No se encontraron archivos", data: [], pagination: { page, limit, totalPages, total }});
+    }
+    return res.status(200).json({ message: "Archivos encontrados correctamente", data: files, pagination: { page, limit, totalPages, total } });
   } catch (error) {
     console.error(error);
+    return res.status(500).json({ message: "Error interno del servidor" });
   }
 }
 
 //Funcion interna, es llamada por getFiles cuando viene query name
 //http://localhost:3001/file?name=nombre
-async function getFilesByName(name) {
+async function getFilesByName(name, req, res) {
   try {
     const foundFilessName = await File.findAll({
       where: {
@@ -182,14 +197,21 @@ async function getFilesByName(name) {
       include: [{ model: Kind }],
     });
     if (foundFilessName.length) {
-      return foundFilessName;
+      return res.status(200).json({ 
+        message: "Archivos encontrados correctamente", 
+        data: foundFilessName 
+      });
     } else {
-      return "No se encontraron archivos asociados";
+      return res.status(404).json({ 
+        message: "No se encontraron archivos asociados",
+        data: []
+      });
     }
   } catch (error) {
-    throw new Error(
-      `No se encontraron archivos con el nombre ${name}, ${error}`
-    );
+    console.error(error);
+    return res.status(500).json({ 
+      message: `Error al buscar archivos: ${error.message}` 
+    });
   }
 }
 
