@@ -38,7 +38,7 @@ async function getUsers() {
     const usersWithDecryptedPasswords = foundUsers.map((user) => {
       const decryptedPassword = CryptoJS.AES.decrypt(
         user.password,
-        process.env.PASS_SEC
+        process.env.PASS_SEC,
       ).toString(CryptoJS.enc.Utf8);
       return {
         ...user.toJSON(), // Convertir el objeto Sequelize a un objeto simple
@@ -127,7 +127,7 @@ async function banUserController(req, res) {
     const message = newActiveState
       ? "Se activó el usuario correctamente"
       : "El usuario ha sido bloqueado exitosamente";
-    return res.status(200).send(message);
+    return res.status(200).json({ message });
   } catch (e) {
     return res.status(500).send(`Error: ${e.message}`);
   }
@@ -301,7 +301,7 @@ async function loginController(req, res) {
     if (userAdmin) {
       const decryptedPassword = CryptoJS.AES.decrypt(
         userAdmin.password,
-        process.env.PASS_SEC
+        process.env.PASS_SEC,
       );
       const originalPassword = decryptedPassword.toString(CryptoJS.enc.Utf8);
 
@@ -354,7 +354,7 @@ async function loginController(req, res) {
 
     const decryptedPassword = CryptoJS.AES.decrypt(
       userLogin.password,
-      process.env.PASS_SEC
+      process.env.PASS_SEC,
     );
     const originalPassword = decryptedPassword.toString(CryptoJS.enc.Utf8);
 
@@ -432,22 +432,20 @@ async function deleteUserController(req, res) {
     const user = await User.findOne({ where: { email } });
 
     if (!user) {
-      return res.status(404).send("Usuario no encontrado");
+      return res.status(404).json({ error: "Usuario no encontrado" });
+    } else if (user.deleted) {
+      await User.update({ deleted: false, active: true }, { where: { email } });
+      return res
+        .status(200)
+        .json({ message: "Usuario restaurado exitosamente" });
+    } else {
+      await User.update({ deleted: true, active: false }, { where: { email } });
+      return res
+        .status(200)
+        .json({ message: "Usuario eliminado exitosamente" });
     }
-
-    await deleteUser(email);
-
-    return res.status(200).send("Usuario eliminado exitosamente");
   } catch (e) {
-    return res.status(500).send(`Error: ${e.message}`);
-  }
-}
-
-async function deleteUser(email) {
-  try {
-    await User.destroy({ where: { email } });
-  } catch (e) {
-    throw e;
+    return res.status(500).json({ error: `Error: ${e.message}` });
   }
 }
 
@@ -465,7 +463,7 @@ async function changePasswordController(req, res) {
     // Decrypt and check if the old password matches
     const decryptedPassword = CryptoJS.AES.decrypt(
       user.password,
-      process.env.PASS_SEC
+      process.env.PASS_SEC,
     ).toString(CryptoJS.enc.Utf8);
 
     if (decryptedPassword !== oldPassword) {
@@ -475,7 +473,7 @@ async function changePasswordController(req, res) {
     // Encrypt and update the new password
     const encryptedNewPassword = CryptoJS.AES.encrypt(
       newPassword,
-      process.env.PASS_SEC
+      process.env.PASS_SEC,
     ).toString();
 
     await User.update({ password: encryptedNewPassword }, { where: { email } });
@@ -500,7 +498,7 @@ async function changePasswordForAllsController(req, res) {
     // Encrypt and update the new password
     const encryptedNewPassword = CryptoJS.AES.encrypt(
       newPassword,
-      process.env.PASS_SEC
+      process.env.PASS_SEC,
     ).toString();
 
     await User.update({ password: encryptedNewPassword }, { where: { email } });
@@ -542,7 +540,7 @@ async function forgotPasswordController(req, res) {
     return res
       .status(200)
       .send(
-        "Se ha enviado un enlace para restablecer la contraseña por correo electrónico"
+        "Se ha enviado un enlace para restablecer la contraseña por correo electrónico",
       );
   } catch (error) {
     return res.status(500).send(`Error: ${error.message}`);
@@ -584,7 +582,7 @@ async function resetPasswordController(req, res) {
     // Encriptar la nueva contraseña
     const encryptedNewPassword = CryptoJS.AES.encrypt(
       newPassword,
-      process.env.PASS_SEC
+      process.env.PASS_SEC,
     ).toString();
 
     // Actualizar la contraseña del usuario
@@ -688,7 +686,7 @@ async function sendchangePasswordUsercontroller(req, res) {
     return res
       .status(200)
       .send(
-        "Se ha enviado un enlace para cambiar la contraseña por correo electrónico"
+        "Se ha enviado un enlace para cambiar la contraseña por correo electrónico",
       );
   } catch (error) {
     return res.status(500).send(`Error: ${error.message}`);
@@ -777,7 +775,7 @@ async function changeUserPasswordController(req, res) {
     // Decrypt and check if the old password matches
     const decryptedPassword = CryptoJS.AES.decrypt(
       user.password,
-      process.env.PASS_SEC
+      process.env.PASS_SEC,
     ).toString(CryptoJS.enc.Utf8);
 
     if (decryptedPassword !== oldPassword) {
@@ -787,7 +785,7 @@ async function changeUserPasswordController(req, res) {
     // Encrypt and update the new password
     const encryptedNewPassword = CryptoJS.AES.encrypt(
       newPassword,
-      process.env.PASS_SEC
+      process.env.PASS_SEC,
     ).toString();
 
     await User.update({ password: encryptedNewPassword }, { where: { email } });
@@ -892,6 +890,7 @@ const getBranches = async (req, res) => {
         "emailJefe",
         "active",
         "createdAt",
+        "deleted",
       ],
       order: [["createdAt", "ASC"]],
       limit,

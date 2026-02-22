@@ -47,7 +47,7 @@ router.post("/login", loginController);
 
 router.post("/logout", logoutController);
 
-router.delete("/:email", isAuth, deleteUserController);
+router.put("/delete/:email", isAuth, deleteUserController);
 
 router.put("/changePsw/:email", isAuth, changePasswordController);
 
