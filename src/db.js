@@ -3,15 +3,17 @@ const { Sequelize } = require("sequelize");
 const fs = require("fs");
 const path = require("path");
 
-const { DB_USER, DB_PASSWORD, DB_HOST, DB_NAME } = process.env;
+const { DB_USER, DB_PASSWORD, DB_HOST, DB_NAME, DB_PORT } = process.env;
 
-const sequelize = new Sequelize(
-  `postgres://${DB_USER}:${DB_PASSWORD}@${DB_HOST}/${DB_NAME}`,
-  {
-    logging: false,
-    native: false,
-  }
-);
+// Soporta DB_HOST con o sin puerto (ej: "localhost" o "localhost:5432") y DB_PORT por separado
+const host = (DB_HOST || "localhost").replace(/:\d+$/, "");
+const port = DB_PORT || 5432;
+const connectionUri = `postgres://${DB_USER}:${DB_PASSWORD}@${host}:${port}/${DB_NAME}`;
+
+const sequelize = new Sequelize(connectionUri, {
+  logging: false,
+  native: false,
+});
 
 const basename = path.basename(__filename);
 
