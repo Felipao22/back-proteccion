@@ -11,7 +11,10 @@ const router = Router();
 router.post(
   "/generate-visit-excel",
   isAuth,
-  upload.array("imagenes"),
+  upload.fields([
+    { name: "imagenes", maxCount: 30 },
+    { name: "firma", maxCount: 1 },
+  ]),
   generateVisitExcel
 );
 

@@ -11,6 +11,29 @@ const sharp = require("sharp");
 const storage = multer.memoryStorage();
 const upload = multer({ storage });
 
+/**
+ * Normaliza el número de DNI al formato argentino XX.XXX.XXX para guardarlo en el Excel.
+ * Solo aplica si el tipo de documento es DNI; otros tipos se devuelven sin cambios.
+ */
+function formatDniParaAlmacenar(tipoDocumento, numeroDocumento) {
+  const tipoNorm = String(tipoDocumento || "")
+    .toLowerCase()
+    .replace(/[.\s]/g, "");
+  if (!tipoNorm.includes("dni")) {
+    return numeroDocumento != null && numeroDocumento !== ""
+      ? String(numeroDocumento)
+      : "";
+  }
+
+  const digits = String(numeroDocumento ?? "").replace(/\D/g, "");
+  if (digits.length === 0) {
+    return String(numeroDocumento ?? "");
+  }
+
+  const d = digits.length > 8 ? digits.slice(-8) : digits.padStart(8, "0");
+  return `${d.slice(0, 2)}.${d.slice(2, 5)}.${d.slice(5, 8)}`;
+}
+
 const generateVisitExcel = async (req, res) => {
   try {
     const data = JSON.parse(req.body.data || "{}");
@@ -39,9 +62,16 @@ const generateVisitExcel = async (req, res) => {
       areas,
       notas,
       documentacion,
+      firma,
+      tipoDocumento,
+      numeroDocumento,
+      aclaracion,
+      cargo,
     } = data;
 
-    const imageFiles = req.files || [];
+    const uploaded = req.files || {};
+    const imageFiles = uploaded.imagenes || [];
+    const firmaFile = uploaded.firma?.[0];
 
     if (!empresa || !direccion || !localidad || !cuit || !fechaVisita) {
       return res.status(400).json({ message: "Faltan campos obligatorios" });
@@ -55,7 +85,7 @@ const generateVisitExcel = async (req, res) => {
     // Plantilla base
     const templatePath = path.join(
       __dirname,
-      "../../files/Constancia visita/Constancia de Visita.xlsx"
+      "../../files/Constancia visita/Constancia de Visita.xlsx",
     );
     if (!fs.existsSync(templatePath)) {
       return res.status(404).json({ message: "Archivo base no encontrado" });
@@ -144,6 +174,32 @@ const generateVisitExcel = async (req, res) => {
       rowIndex += rowMaxHeight / 20 + 1;
       colIndex = leftMargin;
     }
+
+    if (firmaFile?.buffer) {
+      const isPng =
+        firmaFile.mimetype === "image/png" ||
+        (firmaFile.originalname || "").toLowerCase().endsWith(".png");
+      const ext = isPng ? "png" : "jpeg";
+      const firmaBuffer = await sharp(firmaFile.buffer).rotate().toBuffer();
+      const firmaImageId = workbook.addImage({
+        buffer: firmaBuffer,
+        extension: ext,
+      });
+      worksheet.addImage(firmaImageId, {
+        tl: { col: 2, row: 50 },
+        ext: { width: 220, height: 90 },
+      });
+    } else if (firma) {
+      worksheet.getCell("C53").value = firma;
+    }
+    const numeroDocumentoAlmacenado = formatDniParaAlmacenar(
+      tipoDocumento,
+      numeroDocumento,
+    );
+    worksheet.getCell("C54").value =
+      `${tipoDocumento} ${numeroDocumentoAlmacenado}`;
+    worksheet.getCell("C55").value = aclaracion;
+    worksheet.getCell("C56").value = cargo;
 
     // Guardar Excel temporal
     const outputFileName = `Constancia-de-Visita-${formatDate()}.xlsx`;
