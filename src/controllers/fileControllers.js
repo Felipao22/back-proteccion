@@ -160,7 +160,7 @@ async function getFiles(req, res) {
 
 //Funcion interna, es llamada por getFiles cuando no viene query name
 async function getAllFiles(req, res) {
-  let { page } = req.body;
+  let page = parseInt(String(req.query.page ?? "1"), 10);
   try {
     if (!page || isNaN(page) || page < 1) {
       page = 1;
@@ -322,6 +322,7 @@ async function filterFiles(req, res) {
     if (!page || isNaN(page) || page < 1) {
       page = 1;
     }
+    console.log(page, "page");
 
     const limit = 20;
     const offset = (page - 1) * limit;
